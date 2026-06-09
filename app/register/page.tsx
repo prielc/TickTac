@@ -5,18 +5,61 @@ import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 
+type FieldErrors = {
+  name?: string
+  email?: string
+  phone?: string
+  password?: string
+}
+
+function validateIsraeliPhone(phone: string) {
+  return /^05\d[-\s]?\d{3}[-\s]?\d{4}$/.test(phone.trim())
+}
+
+function validateEmail(email: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
+}
+
+function validate(name: string, email: string, phone: string, password: string): FieldErrors {
+  const errors: FieldErrors = {}
+  if (name.trim().length < 2) errors.name = "שם חייב להכיל לפחות 2 תווים"
+  if (!validateEmail(email)) errors.email = "כתובת אימייל לא תקינה"
+  if (!validateIsraeliPhone(phone)) errors.phone = "מספר טלפון לא תקין — למשל: 050-1234567"
+  if (password.length < 6) errors.password = "הסיסמה חייבת להכיל לפחות 6 תווים"
+  return errors
+}
+
+function FieldError({ message }: { message?: string }) {
+  if (!message) return null
+  return <p className="text-red-500 text-xs mt-1">{message}</p>
+}
+
 export default function RegisterPage() {
   const router = useRouter()
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [phone, setPhone] = useState("")
   const [password, setPassword] = useState("")
-  const [error, setError] = useState("")
+  const [errors, setErrors] = useState<FieldErrors>({})
+  const [serverError, setServerError] = useState("")
   const [loading, setLoading] = useState(false)
+
+  function inputClass(hasError: boolean) {
+    return `w-full px-4 py-3 rounded-xl border bg-white text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent ${
+      hasError ? "border-red-400" : "border-gray-200"
+    }`
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    setError("")
+    setServerError("")
+
+    const fieldErrors = validate(name, email, phone, password)
+    if (Object.keys(fieldErrors).length > 0) {
+      setErrors(fieldErrors)
+      return
+    }
+    setErrors({})
     setLoading(true)
 
     const res = await fetch("/api/auth/register", {
@@ -28,7 +71,7 @@ export default function RegisterPage() {
     const data = await res.json()
 
     if (!res.ok) {
-      setError(data.error)
+      setServerError(data.error)
       setLoading(false)
       return
     }
@@ -62,10 +105,11 @@ export default function RegisterPage() {
             <input
               type="text"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => { setName(e.target.value); setErrors((prev) => ({ ...prev, name: undefined })) }}
               placeholder="ישראל ישראלי"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              className={inputClass(!!errors.name)}
             />
+            <FieldError message={errors.name} />
           </div>
 
           <div>
@@ -73,11 +117,11 @@ export default function RegisterPage() {
             <input
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => { setEmail(e.target.value); setErrors((prev) => ({ ...prev, email: undefined })) }}
               placeholder="your@email.com"
-              required
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              className={inputClass(!!errors.email)}
             />
+            <FieldError message={errors.email} />
           </div>
 
           <div>
@@ -88,11 +132,11 @@ export default function RegisterPage() {
             <input
               type="tel"
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="05X-XXXXXXX"
-              required
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              onChange={(e) => { setPhone(e.target.value); setErrors((prev) => ({ ...prev, phone: undefined })) }}
+              placeholder="050-1234567"
+              className={inputClass(!!errors.phone)}
             />
+            <FieldError message={errors.phone} />
           </div>
 
           <div>
@@ -100,15 +144,15 @@ export default function RegisterPage() {
             <input
               type="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => { setPassword(e.target.value); setErrors((prev) => ({ ...prev, password: undefined })) }}
               placeholder="לפחות 6 תווים"
-              required
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              className={inputClass(!!errors.password)}
             />
+            <FieldError message={errors.password} />
           </div>
 
-          {error && (
-            <p className="text-red-500 text-sm text-center">{error}</p>
+          {serverError && (
+            <p className="text-red-500 text-sm text-center">{serverError}</p>
           )}
 
           <button
