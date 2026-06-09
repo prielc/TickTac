@@ -1,20 +1,5 @@
 import Link from "next/link"
-
-export type Game = {
-  id: string
-  homeTeam: string
-  awayTeam: string
-  homeInitials: string
-  awayInitials: string
-  homeColor: string
-  awayColor: string
-  date: string
-  time: string
-  stadium: string
-  availableTickets: number
-  isSelling: boolean
-  competition: string
-}
+import { type Game } from "@/lib/mock-data"
 
 export default function GameCard({ game }: { game: Game }) {
   return (
@@ -58,7 +43,7 @@ export default function GameCard({ game }: { game: Game }) {
         </div>
 
         <div className="flex items-center justify-center mb-4">
-          <span className="text-green-400 text-sm font-semibold">{game.availableTickets} כרטיסים זמינים</span>
+          <span className="text-green-500 text-sm font-semibold">{game.availableTickets} כרטיסים זמינים</span>
         </div>
 
         <button className="w-full bg-primary text-black font-bold py-3 rounded-xl text-base">

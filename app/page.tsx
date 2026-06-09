@@ -1,67 +1,5 @@
-import GameCard, { type Game } from "./components/GameCard"
-
-const mockGames: Game[] = [
-  {
-    id: "1",
-    homeTeam: "ביתר ירושלים",
-    awayTeam: "מכבי חיפה",
-    homeInitials: "ב״י",
-    awayInitials: "מ״ח",
-    homeColor: "#F5C100",
-    awayColor: "#009900",
-    date: "יום שני, 26.08.2024",
-    time: "20:30",
-    stadium: "אצטדיון טדי, ירושלים",
-    availableTickets: 24,
-    isSelling: true,
-    competition: "ליגת העל",
-  },
-  {
-    id: "2",
-    homeTeam: "ביתר ירושלים",
-    awayTeam: "מכבי תל אביב",
-    homeInitials: "ב״י",
-    awayInitials: "מ״ת",
-    homeColor: "#F5C100",
-    awayColor: "#0066CC",
-    date: "שבת, 07.09.2024",
-    time: "19:00",
-    stadium: "אצטדיון טדי, ירושלים",
-    availableTickets: 8,
-    isSelling: true,
-    competition: "ליגת העל",
-  },
-  {
-    id: "3",
-    homeTeam: "ביתר ירושלים",
-    awayTeam: "הפועל תל אביב",
-    homeInitials: "ב״י",
-    awayInitials: "ה״ת",
-    homeColor: "#F5C100",
-    awayColor: "#CC0000",
-    date: "שבת, 21.09.2024",
-    time: "20:00",
-    stadium: "אצטדיון טדי, ירושלים",
-    availableTickets: 31,
-    isSelling: false,
-    competition: "ליגת העל",
-  },
-  {
-    id: "4",
-    homeTeam: "ביתר ירושלים",
-    awayTeam: "הפועל באר שבע",
-    homeInitials: "ב״י",
-    awayInitials: "ה״ב",
-    homeColor: "#F5C100",
-    awayColor: "#FF6600",
-    date: "שבת, 05.10.2024",
-    time: "20:00",
-    stadium: "אצטדיון טדי, ירושלים",
-    availableTickets: 15,
-    isSelling: false,
-    competition: "ליגת העל",
-  },
-]
+import GameCard from "./components/GameCard"
+import { games } from "@/lib/mock-data"
 
 export default function Home() {
   return (
@@ -89,7 +27,7 @@ export default function Home() {
         </div>
 
         <div className="space-y-4">
-          {mockGames.map((game) => (
+          {games.map((game) => (
             <GameCard key={game.id} game={game} />
           ))}
         </div>
