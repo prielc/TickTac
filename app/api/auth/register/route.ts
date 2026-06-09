@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs"
 import { prisma } from "@/lib/prisma"
 
 export async function POST(req: Request) {
-  const { name, email, password } = await req.json()
+  const { name, email, password, phone } = await req.json()
 
   if (!email || !password) {
     return NextResponse.json({ error: "אימייל וסיסמה הם שדות חובה" }, { status: 400 })
@@ -21,7 +21,7 @@ export async function POST(req: Request) {
   const hashed = await bcrypt.hash(password, 10)
 
   await prisma.user.create({
-    data: { name: name || null, email, password: hashed },
+    data: { name: name || null, email, password: hashed, phone: phone || null },
   })
 
   return NextResponse.json({ success: true }, { status: 201 })
