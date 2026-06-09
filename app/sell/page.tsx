@@ -26,11 +26,22 @@ export default function SellPage() {
 
   if (!session) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
-        <p className="text-zinc-600 mb-4">יש להתחבר כדי לפרסם כרטיס</p>
-        <Link href="/login" className="bg-primary text-black font-bold px-6 py-3 rounded-xl">
-          כניסה
-        </Link>
+      <div className="min-h-screen flex flex-col">
+        <header className="flex items-center justify-between px-4 py-4 border-b border-gray-200 bg-white/90 backdrop-blur-sm">
+          <button onClick={() => router.back()} className="p-1">
+            <svg className="w-6 h-6 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <h1 className="text-xl font-black tracking-tight text-zinc-900">פרסום כרטיס</h1>
+          <div className="w-8" />
+        </header>
+        <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
+          <p className="text-zinc-600 mb-4">יש להתחבר כדי לפרסם כרטיס</p>
+          <Link href="/login" className="bg-primary text-black font-bold px-6 py-3 rounded-xl">
+            כניסה
+          </Link>
+        </div>
       </div>
     )
   }
