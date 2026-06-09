@@ -89,7 +89,7 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
           <div className="space-y-3">
             {gameListings.length > 0 ? (
               gameListings.map((listing) => (
-                <ListingCard key={listing.id} listing={listing} />
+                <ListingCard key={listing.id} listing={listing} gameName={`${game.homeTeam} נגד ${game.awayTeam}`} />
               ))
             ) : (
               <p className="text-zinc-400 text-center py-10">אין כרטיסים זמינים כרגע</p>
