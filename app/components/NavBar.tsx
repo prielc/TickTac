@@ -29,14 +29,14 @@ export default function NavBar() {
             <span className="text-xs text-zinc-500">חיפוש</span>
           </button>
 
-          <button className="flex flex-col items-center -mt-5" aria-label="מכירה">
+          <Link href="/sell" className="flex flex-col items-center -mt-5" aria-label="מכירה">
             <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center shadow-lg">
               <svg className="w-6 h-6 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
               </svg>
             </div>
             <span className="text-xs text-zinc-500 mt-1">מכירה</span>
-          </button>
+          </Link>
 
           <button className="flex flex-col items-center gap-1 px-3 py-1" aria-label="כרטיסים">
             <svg className={`w-6 h-6 ${isTickets ? "text-primary" : "text-zinc-500"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

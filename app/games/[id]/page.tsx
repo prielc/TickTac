@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { games, listings } from "@/lib/mock-data"
+import { games } from "@/lib/mock-data"
+import { prisma } from "@/lib/prisma"
 import ListingCard from "@/app/components/ListingCard"
 import NavBar from "@/app/components/NavBar"
 
@@ -10,7 +11,10 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
 
   if (!game) notFound()
 
-  const gameListings = listings.filter((l) => l.gameId === id)
+  const gameListings = await prisma.listing.findMany({
+    where: { gameId: id, isAvailable: true },
+    orderBy: { createdAt: "desc" },
+  })
 
   return (
     <div className="min-h-screen flex flex-col">
