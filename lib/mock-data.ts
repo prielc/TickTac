@@ -2,8 +2,8 @@ export type Game = {
   id: string
   homeTeam: string
   awayTeam: string
-  homeInitials: string
-  awayInitials: string
+  homeLogo: string
+  awayLogo: string
   homeColor: string
   awayColor: string
   date: string
@@ -31,8 +31,8 @@ export const games: Game[] = [
     id: "1",
     homeTeam: "ביתר ירושלים",
     awayTeam: "מכבי חיפה",
-    homeInitials: "ב״י",
-    awayInitials: "מ״ח",
+    homeLogo: "/teams/beitar-jerusalem.svg",
+    awayLogo: "/teams/maccabi-haifa.png",
     homeColor: "#F5C100",
     awayColor: "#009900",
     date: "יום שני, 26.08.2024",
@@ -46,8 +46,8 @@ export const games: Game[] = [
     id: "2",
     homeTeam: "ביתר ירושלים",
     awayTeam: "מכבי תל אביב",
-    homeInitials: "ב״י",
-    awayInitials: "מ״ת",
+    homeLogo: "/teams/beitar-jerusalem.svg",
+    awayLogo: "/teams/maccabi-tel-aviv.png",
     homeColor: "#F5C100",
     awayColor: "#0066CC",
     date: "שבת, 07.09.2024",
@@ -61,8 +61,8 @@ export const games: Game[] = [
     id: "3",
     homeTeam: "ביתר ירושלים",
     awayTeam: "הפועל תל אביב",
-    homeInitials: "ב״י",
-    awayInitials: "ה״ת",
+    homeLogo: "/teams/beitar-jerusalem.svg",
+    awayLogo: "/teams/hapoel-tel-aviv.png",
     homeColor: "#F5C100",
     awayColor: "#CC0000",
     date: "שבת, 21.09.2024",
@@ -76,8 +76,8 @@ export const games: Game[] = [
     id: "4",
     homeTeam: "ביתר ירושלים",
     awayTeam: "הפועל באר שבע",
-    homeInitials: "ב״י",
-    awayInitials: "ה״ב",
+    homeLogo: "/teams/beitar-jerusalem.svg",
+    awayLogo: "/teams/hapoel-beer-sheva.svg",
     homeColor: "#F5C100",
     awayColor: "#FF6600",
     date: "שבת, 05.10.2024",

@@ -1,4 +1,5 @@
 import Link from "next/link"
+import Image from "next/image"
 import { notFound } from "next/navigation"
 import { games } from "@/lib/mock-data"
 import { prisma } from "@/lib/prisma"
@@ -40,21 +41,15 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
 
           <div className="flex items-center justify-between mb-4">
             <div className="flex flex-col items-center gap-2 flex-1">
-              <div
-                className="w-16 h-16 rounded-full flex items-center justify-center font-bold text-base text-black"
-                style={{ backgroundColor: game.homeColor }}
-              >
-                {game.homeInitials}
+              <div className="w-16 h-16 rounded-full bg-white border border-gray-100 flex items-center justify-center overflow-hidden shadow-sm">
+                <Image src={game.homeLogo} alt={game.homeTeam} width={56} height={56} className="object-contain" />
               </div>
               <span className="text-zinc-900 text-sm font-semibold text-center">{game.homeTeam}</span>
             </div>
             <span className="text-zinc-400 text-2xl font-black">VS</span>
             <div className="flex flex-col items-center gap-2 flex-1">
-              <div
-                className="w-16 h-16 rounded-full flex items-center justify-center font-bold text-base text-white"
-                style={{ backgroundColor: game.awayColor }}
-              >
-                {game.awayInitials}
+              <div className="w-16 h-16 rounded-full bg-white border border-gray-100 flex items-center justify-center overflow-hidden shadow-sm">
+                <Image src={game.awayLogo} alt={game.awayTeam} width={56} height={56} className="object-contain" />
               </div>
               <span className="text-zinc-900 text-sm font-semibold text-center">{game.awayTeam}</span>
             </div>

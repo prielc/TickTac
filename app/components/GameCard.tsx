@@ -1,4 +1,5 @@
 import Link from "next/link"
+import Image from "next/image"
 import { type Game } from "@/lib/mock-data"
 
 export default function GameCard({ game }: { game: Game }) {
@@ -15,11 +16,8 @@ export default function GameCard({ game }: { game: Game }) {
 
         <div className="flex items-center justify-between mb-5">
           <div className="flex flex-col items-center gap-2 flex-1">
-            <div
-              className="w-14 h-14 rounded-full flex items-center justify-center font-bold text-sm text-black"
-              style={{ backgroundColor: game.homeColor }}
-            >
-              {game.homeInitials}
+            <div className="w-14 h-14 rounded-full bg-white border border-gray-100 flex items-center justify-center overflow-hidden shadow-sm">
+              <Image src={game.homeLogo} alt={game.homeTeam} width={48} height={48} className="object-contain" />
             </div>
             <span className="text-zinc-900 text-sm font-semibold text-center leading-tight">{game.homeTeam}</span>
           </div>
@@ -27,11 +25,8 @@ export default function GameCard({ game }: { game: Game }) {
           <span className="text-zinc-400 text-xl font-black">VS</span>
 
           <div className="flex flex-col items-center gap-2 flex-1">
-            <div
-              className="w-14 h-14 rounded-full flex items-center justify-center font-bold text-sm text-white"
-              style={{ backgroundColor: game.awayColor }}
-            >
-              {game.awayInitials}
+            <div className="w-14 h-14 rounded-full bg-white border border-gray-100 flex items-center justify-center overflow-hidden shadow-sm">
+              <Image src={game.awayLogo} alt={game.awayTeam} width={48} height={48} className="object-contain" />
             </div>
             <span className="text-zinc-900 text-sm font-semibold text-center leading-tight">{game.awayTeam}</span>
           </div>

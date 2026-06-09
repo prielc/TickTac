@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import Image from "next/image"
 import { games } from "@/lib/mock-data"
 
 const SECTIONS = ["יציע מזרחי", "יציע מערבי", "יציע צפוני", "יציע דרומי", "יציע מערבי VIP", "יציע מזרחי VIP"]
@@ -88,11 +89,8 @@ export default function SellPage() {
                       : "border-gray-200 bg-white"
                   }`}
                 >
-                  <div
-                    className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-black shrink-0"
-                    style={{ backgroundColor: game.homeColor }}
-                  >
-                    {game.homeInitials}
+                  <div className="w-8 h-8 rounded-full bg-white border border-gray-100 flex items-center justify-center overflow-hidden shrink-0">
+                    <Image src={game.homeLogo} alt={game.homeTeam} width={28} height={28} className="object-contain" />
                   </div>
                   <div className="flex-1">
                     <p className="text-sm font-semibold text-zinc-900">
