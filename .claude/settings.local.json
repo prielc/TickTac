@@ -5,7 +5,9 @@
       "Bash(gh auth *)",
       "Bash(gh repo *)",
       "Bash(npx create-next-app@latest *)",
-      "Bash(rsync *)"
+      "Bash(rsync *)",
+      "Bash(vercel *)",
+      "Bash(npm install *)"
     ]
   }
 }
