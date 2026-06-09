@@ -38,13 +38,11 @@ export default function ContactModal({ isOpen, onClose, listing, gameName }: Pro
         className="relative w-full max-w-lg bg-white rounded-t-2xl px-5 pt-5 pb-10 shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Handle */}
         <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5" />
 
         <h2 className="text-xl font-black text-zinc-900 mb-1">יצירת קשר עם המוכר</h2>
         <p className="text-sm text-zinc-500 mb-5">{gameName}</p>
 
-        {/* Listing summary */}
         <div className="bg-gray-50 rounded-xl p-4 mb-5 space-y-1">
           <p className="text-zinc-900 font-bold">{listing.section}</p>
           <p className="text-zinc-500 text-sm">שורה {listing.row}, כיסאות {listing.seats}</p>

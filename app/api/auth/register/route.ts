@@ -1,14 +1,7 @@
 import { NextResponse } from "next/server"
 import bcrypt from "bcryptjs"
 import { prisma } from "@/lib/prisma"
-
-function isValidEmail(email: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-}
-
-function isValidIsraeliPhone(phone: string) {
-  return /^05\d[-\s]?\d{3}[-\s]?\d{4}$/.test(phone.trim())
-}
+import { isValidEmail, isValidIsraeliPhone } from "@/lib/validation"
 
 export async function POST(req: Request) {
   const { name, email, password, phone } = await req.json()

@@ -4,6 +4,7 @@ import { useState } from "react"
 import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { isValidEmail, isValidIsraeliPhone } from "@/lib/validation"
 
 type FieldErrors = {
   name?: string
@@ -12,19 +13,11 @@ type FieldErrors = {
   password?: string
 }
 
-function validateIsraeliPhone(phone: string) {
-  return /^05\d[-\s]?\d{3}[-\s]?\d{4}$/.test(phone.trim())
-}
-
-function validateEmail(email: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
-}
-
 function validate(name: string, email: string, phone: string, password: string): FieldErrors {
   const errors: FieldErrors = {}
   if (name.trim().length < 2) errors.name = "שם חייב להכיל לפחות 2 תווים"
-  if (!validateEmail(email)) errors.email = "כתובת אימייל לא תקינה"
-  if (!validateIsraeliPhone(phone)) errors.phone = "מספר טלפון לא תקין — למשל: 050-1234567"
+  if (!isValidEmail(email)) errors.email = "כתובת אימייל לא תקינה"
+  if (!isValidIsraeliPhone(phone)) errors.phone = "מספר טלפון לא תקין — למשל: 050-1234567"
   if (password.length < 6) errors.password = "הסיסמה חייבת להכיל לפחות 6 תווים"
   return errors
 }
@@ -43,6 +36,10 @@ export default function RegisterPage() {
   const [errors, setErrors] = useState<FieldErrors>({})
   const [serverError, setServerError] = useState("")
   const [loading, setLoading] = useState(false)
+
+  function clearError(field: keyof FieldErrors) {
+    setErrors((prev) => ({ ...prev, [field]: undefined }))
+  }
 
   function inputClass(hasError: boolean) {
     return `w-full px-4 py-3 rounded-xl border bg-white text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent ${
@@ -105,7 +102,7 @@ export default function RegisterPage() {
             <input
               type="text"
               value={name}
-              onChange={(e) => { setName(e.target.value); setErrors((prev) => ({ ...prev, name: undefined })) }}
+              onChange={(e) => { setName(e.target.value); clearError("name") }}
               placeholder="ישראל ישראלי"
               className={inputClass(!!errors.name)}
             />
@@ -117,7 +114,7 @@ export default function RegisterPage() {
             <input
               type="email"
               value={email}
-              onChange={(e) => { setEmail(e.target.value); setErrors((prev) => ({ ...prev, email: undefined })) }}
+              onChange={(e) => { setEmail(e.target.value); clearError("email") }}
               placeholder="your@email.com"
               className={inputClass(!!errors.email)}
             />
@@ -132,7 +129,7 @@ export default function RegisterPage() {
             <input
               type="tel"
               value={phone}
-              onChange={(e) => { setPhone(e.target.value); setErrors((prev) => ({ ...prev, phone: undefined })) }}
+              onChange={(e) => { setPhone(e.target.value); clearError("phone") }}
               placeholder="050-1234567"
               className={inputClass(!!errors.phone)}
             />
@@ -144,7 +141,7 @@ export default function RegisterPage() {
             <input
               type="password"
               value={password}
-              onChange={(e) => { setPassword(e.target.value); setErrors((prev) => ({ ...prev, password: undefined })) }}
+              onChange={(e) => { setPassword(e.target.value); clearError("password") }}
               placeholder="לפחות 6 תווים"
               className={inputClass(!!errors.password)}
             />
