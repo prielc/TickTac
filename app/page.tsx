@@ -65,7 +65,7 @@ const mockGames: Game[] = [
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col max-w-2xl mx-auto">
+    <div className="min-h-screen flex flex-col">
       {/* Header */}
       <header className="flex items-center justify-between px-4 py-4 sticky top-0 bg-zinc-950/90 backdrop-blur-sm z-10 border-b border-zinc-800">
         <button className="p-1" aria-label="תפריט">
