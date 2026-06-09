@@ -18,7 +18,6 @@ export default function SellPage() {
   const [seats, setSeats] = useState("")
   const [price, setPrice] = useState("")
   const [quantity, setQuantity] = useState("1")
-  const [phone, setPhone] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
 
@@ -43,7 +42,7 @@ export default function SellPage() {
     const res = await fetch("/api/listings", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ gameId, section, row, seats, price, quantity, phone }),
+      body: JSON.stringify({ gameId, section, row, seats, price, quantity }),
     })
 
     const data = await res.json()
@@ -179,18 +178,6 @@ export default function SellPage() {
                 ))}
               </select>
             </div>
-          </div>
-
-          {/* Phone */}
-          <div>
-            <label className="block text-sm font-semibold text-zinc-700 mb-2">טלפון ליצירת קשר (אופציונלי)</label>
-            <input
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="05X-XXXXXXX"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary"
-            />
           </div>
 
           {error && <p className="text-red-500 text-sm text-center">{error}</p>}

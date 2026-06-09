@@ -12,7 +12,7 @@ export async function POST(req: Request) {
   const user = await prisma.user.findUnique({ where: { email: session.user.email } })
   if (!user) return NextResponse.json({ error: "משתמש לא נמצא" }, { status: 404 })
 
-  const { gameId, section, row, seats, price, quantity, phone } = await req.json()
+  const { gameId, section, row, seats, price, quantity } = await req.json()
 
   if (!gameId || !section || !row || !seats || !price || !quantity) {
     return NextResponse.json({ error: "כל השדות הם חובה" }, { status: 400 })
@@ -27,7 +27,7 @@ export async function POST(req: Request) {
       seats,
       price: Number(price),
       quantity: Number(quantity),
-      phone: phone || null,
+      phone: user.phone ?? null,
     },
   })
 
