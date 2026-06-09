@@ -27,11 +27,19 @@
 
 ## טכנולוגיות
 
-_יעודכן בהמשך_
+- **Framework:** Next.js (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS
+- **Deployment:** Vercel
 
 ## התחלה מהירה
 
-_יעודכן בהמשך_
+```bash
+npm install
+npm run dev
+```
+
+פתח את [http://localhost:3000](http://localhost:3000) בדפדפן.
 
 ---
 
