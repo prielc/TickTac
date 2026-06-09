@@ -15,7 +15,16 @@
       "Bash(npm run *)",
       "Bash(npx tsc *)",
       "Bash(npm uninstall *)",
-      "Bash(npx prisma *)"
+      "Bash(npx prisma *)",
+      "Bash(curl -s -o /dev/null -w 'HTTP %{http_code}\\\\n' https://tick-tac-nu.vercel.app/)",
+      "Bash(curl -s -o /dev/null -w 'HTTP %{http_code}\\\\n' https://tick-tac-nu.vercel.app/games/1)",
+      "Bash(curl -s -o /dev/null -w 'HTTP %{http_code}\\\\n' https://tick-tac-nu.vercel.app/login)",
+      "Bash(curl -s -o /dev/null -w 'HTTP %{http_code}\\\\n' https://tick-tac-nu.vercel.app/register)",
+      "Bash(curl -s -o /dev/null -w 'HTTP %{http_code}\\\\n' https://tick-tac-nu.vercel.app/sell)",
+      "Bash(curl -s \"https://tick-tac-nu.vercel.app/games/1\")",
+      "Bash(curl *)",
+      "Bash(npx vercel *)",
+      "Bash(DATABASE_URL=\"postgresql://postgres:heVxoj-0kyjgy-wikweb@db.czqgufsdoqoterqdpaiz.supabase.co:5432/postgres\" node *)"
     ]
   }
 }
