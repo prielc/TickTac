@@ -65,7 +65,7 @@ const mockGames: Game[] = [
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col max-w-md mx-auto">
+    <div className="min-h-screen flex flex-col max-w-2xl mx-auto">
       {/* Header */}
       <header className="flex items-center justify-between px-4 py-4 sticky top-0 bg-zinc-950/90 backdrop-blur-sm z-10 border-b border-zinc-800">
         <button className="p-1" aria-label="תפריט">
@@ -97,7 +97,7 @@ export default function Home() {
 
       {/* Bottom Navigation */}
       <nav className="fixed bottom-0 right-0 left-0 z-20">
-        <div className="max-w-md mx-auto bg-zinc-900 border-t border-zinc-800">
+        <div className="max-w-2xl mx-auto bg-zinc-900 border-t border-zinc-800">
           <div className="flex items-center justify-around px-2 py-2">
             <button className="flex flex-col items-center gap-1 px-3 py-1" aria-label="בית">
               <svg className="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
