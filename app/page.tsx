@@ -67,15 +67,15 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header */}
-      <header className="flex items-center justify-between px-4 py-4 sticky top-0 bg-zinc-950/90 backdrop-blur-sm z-10 border-b border-zinc-800">
+      <header className="flex items-center justify-between px-4 py-4 sticky top-0 bg-white/90 backdrop-blur-sm z-10 border-b border-gray-200">
         <button className="p-1" aria-label="תפריט">
-          <svg className="w-6 h-6 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <svg className="w-6 h-6 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
-        <h1 className="text-xl font-black tracking-tight text-white">TickTac</h1>
+        <h1 className="text-xl font-black tracking-tight text-zinc-900">TickTac</h1>
         <button className="p-1" aria-label="התראות">
-          <svg className="w-6 h-6 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <svg className="w-6 h-6 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
           </svg>
         </button>
@@ -84,7 +84,7 @@ export default function Home() {
       {/* Main */}
       <main className="flex-1 px-4 pt-5 pb-28">
         <div className="mb-5">
-          <h2 className="text-2xl font-bold text-white">משחקים קרובים</h2>
+          <h2 className="text-2xl font-bold text-zinc-900">משחקים קרובים</h2>
           <p className="text-zinc-500 text-sm mt-1">ביתר ירושלים</p>
         </div>
 
@@ -97,7 +97,7 @@ export default function Home() {
 
       {/* Bottom Navigation */}
       <nav className="fixed bottom-0 right-0 left-0 z-20">
-        <div className="max-w-2xl mx-auto bg-zinc-900 border-t border-zinc-800">
+        <div className="max-w-2xl mx-auto bg-white border-t border-gray-200">
           <div className="flex items-center justify-around px-2 py-2">
             <button className="flex flex-col items-center gap-1 px-3 py-1" aria-label="בית">
               <svg className="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

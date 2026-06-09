@@ -8,8 +8,8 @@
 }
 
 body {
-  background-color: #09090b;
-  color: #fafafa;
-  background-image: radial-gradient(circle, #27272a 1px, transparent 1px);
+  background-color: #ffffff;
+  color: #111111;
+  background-image: radial-gradient(circle, #e5e7eb 1px, transparent 1px);
   background-size: 24px 24px;
 }
