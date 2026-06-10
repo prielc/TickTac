@@ -51,6 +51,7 @@ postgresql://postgres.czqgufsdoqoterqdpaiz:[PASSWORD]@aws-0-eu-west-3.pooler.sup
 5. **ניווט:** NavBar קבוע למטה, "חיפוש" מסומן כ-"בקרוב" (מושבת); אייקון הפרופיל (עם שם המשתמש) מוביל לדף `/profile` ולא מתנתק ישירות
 6. **עריכת פרופיל:** בדף `/profile` כפתור "ערוך" הופך את התצוגה לטופס inline לעריכת שם וטלפון (`app/components/ProfileDetails.tsx`, `PATCH /api/profile`); לאחר שמירה השם מתעדכן מיידית גם ב-NavBar (session update + `auth.ts` callbacks)
 7. **סימון מודעה כנמכרת:** בדף `/profile/listings` ("המודעות שלי") כל מוכר רואה את המודעות שפרסם, עם כפתור טוגל "סמן כנמכר"/"סמן כזמין" (`app/components/MyListingItem.tsx`, `PATCH /api/listings/[id]`, מעדכן `isAvailable`); מודעה שסומנה כנמכרת לא מופיעה יותר בדף המשחק לקונים
+8. **פילטרים בדף המשחק:** `app/components/GameListings.tsx` — מיון כרטיסים לפי מחיר (מהזול ליקר/מהיקר לזול) וסינון לפי יציע/כמות, מתוך הערכים שקיימים בפועל ברשימת הכרטיסים הזמינים
 
 ## מבנה קבצים מרכזי
 ```
@@ -65,7 +66,7 @@ app/
   profile/listings/page.tsx # המודעות שלי + סימון כנמכר/זמין
   api/profile/route.ts     # PATCH עריכת שם/טלפון
   api/listings/[id]/route.ts # PATCH סימון מודעה כנמכרת/זמינה
-  components/               # GameCard, ListingCard, ContactModal, NavBar, SignOutButton, ProfileDetails, MyListingItem
+  components/               # GameCard, ListingCard, GameListings, ContactModal, NavBar, SignOutButton, ProfileDetails, MyListingItem
 lib/
   mock-data.ts              # משחקים (קבוע)
   prisma.ts                 # Prisma singleton + adapter
@@ -84,7 +85,9 @@ public/teams/                # לוגואי קבוצות
 
 ## מה עוד לא נבנה (רעיונות להמשך)
 - חיפוש (כרגע מושבת, "בקרוב")
-- פילטרים בדף המשחק (מחיר/יציע/כמות) — UI קיים, לא פונקציונלי
+- דיווח על משתמשים/מודעות חשודים
+- דירוג משתמשים (אמון בין קונה למוכר)
 - צ'אט פנימי באתר
+- התראות (push/אימייל על מודעות חדשות לפי קריטריונים)
 - הוספת משחקים/קבוצות/ענפי ספורט נוספים (כרגע רק ביתר ירושלים, mock data)
 - היסטוריית מודעות בדף `/profile`
