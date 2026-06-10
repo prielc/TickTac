@@ -37,6 +37,11 @@ export default function GameListings({ listings, gameName }: Props) {
     [listings]
   )
 
+  const totalTickets = useMemo(
+    () => listings.reduce((sum, l) => sum + l.quantity, 0),
+    [listings]
+  )
+
   const filteredListings = useMemo(() => {
     let result = listings
 
@@ -101,7 +106,7 @@ export default function GameListings({ listings, gameName }: Props) {
       {/* Listings */}
       <div className="px-4 pt-4">
         <h2 className="text-lg font-bold text-zinc-900 mb-3">
-          כרטיסים זמינים ({filteredListings.length})
+          כרטיסים זמינים ({totalTickets})
         </h2>
         <div className="space-y-3">
           {listings.length === 0 ? (

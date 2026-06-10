@@ -1,8 +1,17 @@
 import GameCard from "./components/GameCard"
 import NavBar from "./components/NavBar"
 import { games } from "@/lib/mock-data"
+import { prisma } from "@/lib/prisma"
 
-export default function Home() {
+export default async function Home() {
+  const ticketSums = await prisma.listing.groupBy({
+    by: ["gameId"],
+    where: { isAvailable: true },
+    _sum: { quantity: true },
+  })
+
+  const ticketCounts = new Map(ticketSums.map((row) => [row.gameId, row._sum.quantity ?? 0]))
+
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header */}
@@ -29,7 +38,7 @@ export default function Home() {
 
         <div className="space-y-4">
           {games.map((game) => (
-            <GameCard key={game.id} game={game} />
+            <GameCard key={game.id} game={game} availableTickets={ticketCounts.get(game.id) ?? 0} />
           ))}
         </div>
       </main>

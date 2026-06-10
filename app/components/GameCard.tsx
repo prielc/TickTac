@@ -2,7 +2,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { type Game } from "@/lib/mock-data"
 
-export default function GameCard({ game }: { game: Game }) {
+export default function GameCard({ game, availableTickets }: { game: Game; availableTickets?: number }) {
   return (
     <Link href={`/games/${game.id}`} className="block">
       <div className="bg-white rounded-2xl p-4 relative border border-gray-200 shadow-sm active:border-gray-300 transition-colors">
@@ -37,9 +37,11 @@ export default function GameCard({ game }: { game: Game }) {
           <p className="text-zinc-400 text-xs">{game.stadium}</p>
         </div>
 
-        <div className="flex items-center justify-center mb-4">
-          <span className="text-green-500 text-sm font-semibold">{game.availableTickets} כרטיסים זמינים</span>
-        </div>
+        {availableTickets !== undefined && (
+          <div className="flex items-center justify-center mb-4">
+            <span className="text-green-500 text-sm font-semibold">{availableTickets} כרטיסים זמינים</span>
+          </div>
+        )}
 
         <button className="w-full bg-primary text-black font-bold py-3 rounded-xl text-base">
           קנה כרטיסים
