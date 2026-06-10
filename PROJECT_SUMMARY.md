@@ -1,6 +1,6 @@
 # TickTac — סיכום פרויקט
 
-_עודכן: 2026-06-11_
+_עודכן: 2026-06-10_
 
 > לכללי עבודה ולתקציר קצר ראו גם [CLAUDE.md](./CLAUDE.md)
 
@@ -66,9 +66,13 @@ lib/
   mock-data.ts              # משחקים (קבוע)
   prisma.ts                 # Prisma singleton + adapter
   validation.ts             # ולידציה משותפת
+  validation.test.ts        # בדיקות יחידה (Vitest) ל-isValidIsraeliPhone
 prisma/schema.prisma         # User, Account, Session, Listing
 public/teams/                # לוגואי קבוצות
 ```
+
+## בדיקות
+- **Vitest** מותקן (`npm test`). כרגע יש בדיקות יחידה ל-`isValidIsraeliPhone` ב-`lib/validation.test.ts` — מכסות פורמטים תקינים (עם מקף/רווח/בלי מפריד) ולא תקינים (קידומת בינלאומית, אורך שגוי, קווי, אותיות, ריק).
 
 ## סטטוס נוכחי
 ✅ פרוס ועובד ב-production: https://tick-tac-nu.vercel.app
