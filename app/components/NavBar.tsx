@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useSession, signOut } from "next-auth/react"
+import { useSession } from "next-auth/react"
 import { usePathname } from "next/navigation"
 
 export default function NavBar() {
@@ -10,6 +10,7 @@ export default function NavBar() {
 
   const isHome = pathname === "/"
   const isTickets = pathname.startsWith("/games")
+  const isProfile = pathname === "/profile"
 
   return (
     <nav className="fixed bottom-0 right-0 left-0 z-20">
@@ -51,16 +52,12 @@ export default function NavBar() {
           </button>
 
           {session ? (
-            <button
-              onClick={() => signOut({ callbackUrl: "/" })}
-              className="flex flex-col items-center gap-1 py-1"
-              aria-label="יציאה"
-            >
-              <svg className="w-6 h-6 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <Link href="/profile" className="flex flex-col items-center gap-1 py-1" aria-label="פרופיל">
+              <svg className={`w-6 h-6 ${isProfile ? "text-primary" : "text-zinc-500"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
-              <span className="text-[10px] text-zinc-500 whitespace-nowrap">{session.user?.name ?? "פרופיל"}</span>
-            </button>
+              <span className={`text-[10px] whitespace-nowrap ${isProfile ? "text-primary font-medium" : "text-zinc-500"}`}>{session.user?.name ?? "פרופיל"}</span>
+            </Link>
           ) : (
             <Link href="/login" className="flex flex-col items-center gap-1 py-1" aria-label="כניסה">
               <svg className="w-6 h-6 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
