@@ -32,6 +32,7 @@ postgresql://postgres.czqgufsdoqoterqdpaiz:[PASSWORD]@aws-0-eu-west-3.pooler.sup
 - **Listings (כרטיסים למכירה):** ב-DB (Prisma model `Listing`) — gameId, section, row, seats, price, quantity, phone, isAvailable.
 - **User:** email, password (hash), name, **phone (חובה בהרשמה)**.
 - **Report (דיווחים):** ב-DB (Prisma model `Report`) — reporterId, listingId, reason, description, createdAt. סיבות אפשריות מוגדרות ב-`lib/report-reasons.ts`.
+- **Rating (דירוגים):** ב-DB (Prisma model `Rating`) — raterId, ratedUserId, listingId, score (1-5), comment, createdAt/updatedAt. ייחודי לכל זוג (raterId, listingId) — דירוג חוזר על אותה מודעה מעדכן (upsert) ולא יוצר רשומה נוספת.
 
 ## מסכים שנבנו
 | מסך | נתיב | תיאור |
@@ -56,6 +57,7 @@ postgresql://postgres.czqgufsdoqoterqdpaiz:[PASSWORD]@aws-0-eu-west-3.pooler.sup
 8. **פילטרים בדף המשחק:** `app/components/GameListings.tsx` — מיון כרטיסים לפי מחיר (מהזול ליקר/מהיקר לזול) וסינון לפי יציע/כמות, מתוך הערכים שקיימים בפועל ברשימת הכרטיסים הזמינים
 9. **חיפוש משחקים:** `/search` — סינון client-side של `lib/mock-data.ts` לפי שם קבוצה/יריבה/אצטדיון/תחרות; תשתית שתקבל ערך גדול יותר ככל שיתווספו עוד משחקים/קבוצות
 10. **דיווח על מודעות חשודות:** קישור "דיווח על מודעה" בכל `ListingCard` פותח `app/components/ReportModal.tsx`; משתמש לא מחובר מופנה להתחברות, משתמש מחובר בוחר סיבה (מתוך `lib/report-reasons.ts`) ומוסיף תיאור חופשי, ושולח ל-`POST /api/reports`. ה-API דורש התחברות, מונע דיווח על מודעה של המשתמש עצמו, ושומר את הדיווח ב-DB (`Report`) לבדיקה ידנית — אין כרגע מסך ניהול דיווחים
+11. **דירוג משתמשים:** כפתור "דרגו את המוכר" בתוך `ContactModal` פותח `app/components/RatingModal.tsx` — משתמש לא מחובר מופנה להתחברות, משתמש מחובר בוחר 1-5 כוכבים + הערה חופשית ושולח ל-`POST /api/ratings` (דורש התחברות, מונע דירוג עצמי, upsert לפי raterId+listingId). הדירוג הממוצע + מספר הדירוגים של כל מוכר מחושב ב-`lib/ratings.ts` (`getSellerRatings`) ומוצג כתג `RatingBadge` (★ ממוצע (כמות)) על כל מודעה שלו בדף המשחק — מבוסס אמון, ללא אימות שהתבצעה עסקה בפועל
 
 ## מבנה קבצים מרכזי
 ```
@@ -72,14 +74,16 @@ app/
   api/profile/route.ts     # PATCH עריכת שם/טלפון
   api/listings/[id]/route.ts # PATCH סימון מודעה כנמכרת/זמינה
   api/reports/route.ts     # POST דיווח על מודעה
-  components/               # GameCard, ListingCard, GameListings, ContactModal, ReportModal, NavBar, SignOutButton, ProfileDetails, MyListingItem
+  api/ratings/route.ts     # POST דירוג מוכר
+  components/               # GameCard, ListingCard, GameListings, ContactModal, ReportModal, RatingModal, RatingBadge, NavBar, SignOutButton, ProfileDetails, MyListingItem
 lib/
   mock-data.ts              # משחקים (קבוע)
   prisma.ts                 # Prisma singleton + adapter
   validation.ts             # ולידציה משותפת
   validation.test.ts        # בדיקות יחידה (Vitest) ל-isValidIsraeliPhone
   report-reasons.ts         # רשימת סיבות דיווח משותפת ל-API ול-UI
-prisma/schema.prisma         # User, Account, Session, Listing, Report
+  ratings.ts                # חישוב ממוצע/כמות דירוגים למוכר + ולידציית ציון
+prisma/schema.prisma         # User, Account, Session, Listing, Report, Rating
 public/teams/                # לוגואי קבוצות
 ```
 
@@ -92,7 +96,7 @@ public/teams/                # לוגואי קבוצות
 
 ## מה עוד לא נבנה (רעיונות להמשך)
 - מסך ניהול לדיווחים שהתקבלו (כרגע נשמרים ב-DB בלבד, לבדיקה ידנית)
-- דירוג משתמשים (אמון בין קונה למוכר)
+- הצגת הערות הדירוג (comments) למוכר — כרגע רק ממוצע+כמות מוצגים, ההערות נשמרות ב-DB בלבד
 - צ'אט פנימי באתר
 - התראות (push/אימייל על מודעות חדשות לפי קריטריונים)
 - הוספת משחקים/קבוצות/ענפי ספורט נוספים (כרגע רק ביתר ירושלים, mock data)
