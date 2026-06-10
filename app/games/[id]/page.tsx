@@ -34,7 +34,7 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
         </button>
       </header>
 
-      <main className="flex-1 pb-28">
+      <main className="flex-1 pb-28 max-w-2xl mx-auto w-full">
         {/* Game hero */}
         <div className="bg-white border-b border-gray-200 px-4 py-5">
           <p className="text-center text-xs text-zinc-400 mb-4">{game.competition}</p>

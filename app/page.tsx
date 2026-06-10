@@ -21,7 +21,7 @@ export default function Home() {
       </header>
 
       {/* Main */}
-      <main className="flex-1 px-4 pt-5 pb-28">
+      <main className="flex-1 px-4 pt-5 pb-28 max-w-2xl mx-auto w-full">
         <div className="mb-5">
           <h2 className="text-2xl font-bold text-zinc-900">משחקים קרובים</h2>
           <p className="text-zinc-500 text-sm mt-1">ביתר ירושלים</p>
