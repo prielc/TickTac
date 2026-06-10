@@ -14,7 +14,7 @@ export async function POST(req: Request) {
 
   const { gameId, section, row, seats, price, quantity } = await req.json()
 
-  if (!gameId || !section || !row || !seats || !price || !quantity) {
+  if (!gameId || !section || !price || !quantity) {
     return NextResponse.json({ error: "כל השדות הם חובה" }, { status: 400 })
   }
 
@@ -23,8 +23,8 @@ export async function POST(req: Request) {
       gameId,
       userId: user.id,
       section,
-      row,
-      seats,
+      row: row || "",
+      seats: seats || "",
       price: Number(price),
       quantity: Number(quantity),
       phone: user.phone ?? null,

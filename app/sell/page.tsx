@@ -138,24 +138,22 @@ export default function SellPage() {
           {/* Row + Seats */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-semibold text-zinc-700 mb-2">שורה</label>
+              <label className="block text-sm font-semibold text-zinc-700 mb-2">שורה <span className="text-zinc-400 font-normal">(לא חובה)</span></label>
               <input
                 type="text"
                 value={row}
                 onChange={(e) => setRow(e.target.value)}
                 placeholder="למשל: 12"
-                required
                 className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-zinc-700 mb-2">כיסאות</label>
+              <label className="block text-sm font-semibold text-zinc-700 mb-2">כיסאות <span className="text-zinc-400 font-normal">(לא חובה)</span></label>
               <input
                 type="text"
                 value={seats}
                 onChange={(e) => setSeats(e.target.value)}
                 placeholder="למשל: 44-45"
-                required
                 className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
