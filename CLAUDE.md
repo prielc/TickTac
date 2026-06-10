@@ -1,6 +1,10 @@
 # TickTac
 
+שוק יד-שנייה (P2P) לכרטיסים לאירועי ספורט בישראל — מתחילים עם משחקי בית של ביתר ירושלים. קונה ומוכר מתואמים ישירות (WhatsApp/טלפון), בלי תשלום דרך הפלטפורמה.
 
+**Stack:** Next.js 16.2.7 (App Router) + TypeScript + Tailwind v4, Prisma 7 (`@prisma/adapter-pg`) + Supabase Postgres (חובה connection pooler בפורט 6543, לא 5432!), NextAuth v4, פרוס ב-Vercel, RTL עברית.
+
+לסיכום מלא ומפורט (ארכיטקטורה, מבנה קבצים, מה נבנה, מה עוד לא) ראו **[PROJECT_SUMMARY.md](./PROJECT_SUMMARY.md)**.
 
 ## Notes for Claude
 1. "Before writing any code, describe your approach and wait for approval. Always ask clarifying questions before writing any code if requirements are ambiguous. After the approach description, add 2-3 simple sentences explaining what this stage/feature does in plain language (no jargon)."
