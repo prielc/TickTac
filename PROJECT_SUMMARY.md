@@ -31,6 +31,7 @@ postgresql://postgres.czqgufsdoqoterqdpaiz:[PASSWORD]@aws-0-eu-west-3.pooler.sup
 - **Games (משחקים):** קבועים ב-`lib/mock-data.ts` — לא ב-DB. כל משחק: קבוצות, לוגואים (`public/teams/`), תאריך, אצטדיון, תחרות.
 - **Listings (כרטיסים למכירה):** ב-DB (Prisma model `Listing`) — gameId, section, row, seats, price, quantity, phone, isAvailable.
 - **User:** email, password (hash), name, **phone (חובה בהרשמה)**.
+- **Report (דיווחים):** ב-DB (Prisma model `Report`) — reporterId, listingId, reason, description, createdAt. סיבות אפשריות מוגדרות ב-`lib/report-reasons.ts`.
 
 ## מסכים שנבנו
 | מסך | נתיב | תיאור |
@@ -54,6 +55,7 @@ postgresql://postgres.czqgufsdoqoterqdpaiz:[PASSWORD]@aws-0-eu-west-3.pooler.sup
 7. **סימון מודעה כנמכרת:** בדף `/profile/listings` ("המודעות שלי") כל מוכר רואה את המודעות שפרסם, עם כפתור טוגל "סמן כנמכר"/"סמן כזמין" (`app/components/MyListingItem.tsx`, `PATCH /api/listings/[id]`, מעדכן `isAvailable`); מודעה שסומנה כנמכרת לא מופיעה יותר בדף המשחק לקונים
 8. **פילטרים בדף המשחק:** `app/components/GameListings.tsx` — מיון כרטיסים לפי מחיר (מהזול ליקר/מהיקר לזול) וסינון לפי יציע/כמות, מתוך הערכים שקיימים בפועל ברשימת הכרטיסים הזמינים
 9. **חיפוש משחקים:** `/search` — סינון client-side של `lib/mock-data.ts` לפי שם קבוצה/יריבה/אצטדיון/תחרות; תשתית שתקבל ערך גדול יותר ככל שיתווספו עוד משחקים/קבוצות
+10. **דיווח על מודעות חשודות:** קישור "דיווח על מודעה" בכל `ListingCard` פותח `app/components/ReportModal.tsx`; משתמש לא מחובר מופנה להתחברות, משתמש מחובר בוחר סיבה (מתוך `lib/report-reasons.ts`) ומוסיף תיאור חופשי, ושולח ל-`POST /api/reports`. ה-API דורש התחברות, מונע דיווח על מודעה של המשתמש עצמו, ושומר את הדיווח ב-DB (`Report`) לבדיקה ידנית — אין כרגע מסך ניהול דיווחים
 
 ## מבנה קבצים מרכזי
 ```
@@ -69,13 +71,15 @@ app/
   profile/listings/page.tsx # המודעות שלי + סימון כנמכר/זמין
   api/profile/route.ts     # PATCH עריכת שם/טלפון
   api/listings/[id]/route.ts # PATCH סימון מודעה כנמכרת/זמינה
-  components/               # GameCard, ListingCard, GameListings, ContactModal, NavBar, SignOutButton, ProfileDetails, MyListingItem
+  api/reports/route.ts     # POST דיווח על מודעה
+  components/               # GameCard, ListingCard, GameListings, ContactModal, ReportModal, NavBar, SignOutButton, ProfileDetails, MyListingItem
 lib/
   mock-data.ts              # משחקים (קבוע)
   prisma.ts                 # Prisma singleton + adapter
   validation.ts             # ולידציה משותפת
   validation.test.ts        # בדיקות יחידה (Vitest) ל-isValidIsraeliPhone
-prisma/schema.prisma         # User, Account, Session, Listing
+  report-reasons.ts         # רשימת סיבות דיווח משותפת ל-API ול-UI
+prisma/schema.prisma         # User, Account, Session, Listing, Report
 public/teams/                # לוגואי קבוצות
 ```
 
@@ -87,7 +91,7 @@ public/teams/                # לוגואי קבוצות
 ✅ End-to-end נבדק: הרשמה → התחברות → פרסום כרטיס → הופעה בדף המשחק → יצירת קשר עם מוכר
 
 ## מה עוד לא נבנה (רעיונות להמשך)
-- דיווח על משתמשים/מודעות חשודים
+- מסך ניהול לדיווחים שהתקבלו (כרגע נשמרים ב-DB בלבד, לבדיקה ידנית)
 - דירוג משתמשים (אמון בין קונה למוכר)
 - צ'אט פנימי באתר
 - התראות (push/אימייל על מודעות חדשות לפי קריטריונים)
