@@ -3,7 +3,7 @@ import Image from "next/image"
 import { notFound } from "next/navigation"
 import { games } from "@/lib/mock-data"
 import { prisma } from "@/lib/prisma"
-import ListingCard from "@/app/components/ListingCard"
+import GameListings from "@/app/components/GameListings"
 import NavBar from "@/app/components/NavBar"
 
 export default async function GamePage({ params }: { params: Promise<{ id: string }> }) {
@@ -61,36 +61,7 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
           </div>
         </div>
 
-        {/* Filters */}
-        <div className="px-4 py-3 flex gap-2 overflow-x-auto border-b border-gray-100">
-          {["מחיר", "יציע", "כמות"].map((filter) => (
-            <button
-              key={filter}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-full border border-gray-300 text-sm text-zinc-600 whitespace-nowrap bg-white"
-            >
-              {filter}
-              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-          ))}
-        </div>
-
-        {/* Listings */}
-        <div className="px-4 pt-4">
-          <h2 className="text-lg font-bold text-zinc-900 mb-3">
-            כרטיסים זמינים ({gameListings.length})
-          </h2>
-          <div className="space-y-3">
-            {gameListings.length > 0 ? (
-              gameListings.map((listing) => (
-                <ListingCard key={listing.id} listing={listing} gameName={`${game.homeTeam} נגד ${game.awayTeam}`} />
-              ))
-            ) : (
-              <p className="text-zinc-400 text-center py-10">אין כרטיסים זמינים כרגע</p>
-            )}
-          </div>
-        </div>
+        <GameListings listings={gameListings} gameName={`${game.homeTeam} נגד ${game.awayTeam}`} />
       </main>
 
       <NavBar />
