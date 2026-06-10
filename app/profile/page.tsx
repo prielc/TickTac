@@ -38,6 +38,13 @@ export default async function ProfilePage() {
       <main className="flex-1 px-4 pt-6 pb-28 max-w-lg mx-auto w-full">
         <ProfileDetails email={user.email} initialName={user.name ?? ""} initialPhone={user.phone ?? ""} />
 
+        <Link
+          href="/profile/listings"
+          className="block w-full text-center bg-gray-50 border border-gray-200 text-zinc-900 font-bold py-2.5 rounded-xl text-sm mb-6"
+        >
+          המודעות שלי
+        </Link>
+
         <SignOutButton />
       </main>
 
