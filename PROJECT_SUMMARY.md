@@ -1,6 +1,6 @@
 # TickTac — סיכום פרויקט
 
-_עודכן: 2026-06-10_
+_עודכן: 2026-06-11_
 
 > לכללי עבודה ולתקציר קצר ראו גם [CLAUDE.md](./CLAUDE.md)
 
@@ -40,13 +40,14 @@ postgresql://postgres.czqgufsdoqoterqdpaiz:[PASSWORD]@aws-0-eu-west-3.pooler.sup
 | הרשמה | `/register` | שם, אימייל, טלפון (ולידציה client+server), סיסמה |
 | כניסה | `/login` | אימייל + סיסמה |
 | פרסום כרטיס | `/sell` | בחירת משחק, יציע, שורה/מקומות, מחיר/כמות (טלפון נלקח אוטומטית מהפרופיל) |
+| פרופיל | `/profile` | שם, אימייל, טלפון של המשתמש המחובר + כפתור התנתקות. דורש התחברות (אחרת מפנה ל-`/login`) |
 
 ## פיצ'רים מרכזיים שמומשו
 1. **זרימת מוכר:** הרשמה → פרסום כרטיס → נשמר ב-Supabase
 2. **זרימת קונה (Stage 4a):** לחיצה על "קנה" פותחת modal עם כפתורי WhatsApp (הודעה מוכנה עם פרטי הכרטיס) ושיחה — `app/components/ContactModal.tsx`
 3. **לוגואים אמיתיים** לכל הקבוצות (הורדו מ-Wikipedia ל-`public/teams/`)
 4. **ולידציה מלאה** בהרשמה (שם, אימייל, טלפון ישראלי, סיסמה) — `lib/validation.ts` משותף ל-client ו-API
-5. **ניווט:** NavBar קבוע למטה, "חיפוש" מסומן כ-"בקרוב" (מושבת)
+5. **ניווט:** NavBar קבוע למטה, "חיפוש" מסומן כ-"בקרוב" (מושבת); אייקון הפרופיל (עם שם המשתמש) מוביל לדף `/profile` ולא מתנתק ישירות
 
 ## מבנה קבצים מרכזי
 ```
@@ -57,7 +58,8 @@ app/
   login/, register/         # auth pages
   api/auth/                 # NextAuth + register endpoint
   api/listings/             # POST listing
-  components/               # GameCard, ListingCard, ContactModal, NavBar
+  profile/page.tsx          # פרופיל משתמש + התנתקות
+  components/               # GameCard, ListingCard, ContactModal, NavBar, SignOutButton
 lib/
   mock-data.ts              # משחקים (קבוע)
   prisma.ts                 # Prisma singleton + adapter
@@ -76,4 +78,4 @@ public/teams/                # לוגואי קבוצות
 - סימון כרטיס כ"נמכר" ע"י המוכר
 - צ'אט פנימי באתר
 - הוספת משחקים/קבוצות/ענפי ספורט נוספים (כרגע רק ביתר ירושלים, mock data)
-- פרופיל משתמש (עריכת פרטים, היסטוריית מודעות)
+- עריכת פרטי פרופיל והיסטוריית מודעות (כרגע `/profile` מציג פרטים בלבד + התנתקות)
