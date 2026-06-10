@@ -1,11 +1,14 @@
 "use client"
 
+import { useState } from "react"
 import { formatSeatInfo } from "@/lib/format"
+import RatingModal from "./RatingModal"
 
 type Props = {
   isOpen: boolean
   onClose: () => void
   listing: {
+    id: string
     section: string
     row: string
     seats: string
@@ -17,6 +20,8 @@ type Props = {
 }
 
 export default function ContactModal({ isOpen, onClose, listing, gameName }: Props) {
+  const [ratingOpen, setRatingOpen] = useState(false)
+
   if (!isOpen) return null
 
   const seatInfo = formatSeatInfo(listing.row, listing.seats)
@@ -86,12 +91,21 @@ export default function ContactModal({ isOpen, onClose, listing, gameName }: Pro
         )}
 
         <button
+          onClick={() => setRatingOpen(true)}
+          className="mt-4 w-full border-2 border-gray-200 text-zinc-900 font-bold py-3 rounded-xl text-sm"
+        >
+          דרגו את המוכר
+        </button>
+
+        <button
           onClick={onClose}
-          className="mt-4 w-full text-zinc-400 text-sm py-2"
+          className="mt-2 w-full text-zinc-400 text-sm py-2"
         >
           ביטול
         </button>
       </div>
+
+      <RatingModal isOpen={ratingOpen} onClose={() => setRatingOpen(false)} listingId={listing.id} />
     </div>
   )
 }

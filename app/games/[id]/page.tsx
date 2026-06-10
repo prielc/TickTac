@@ -3,6 +3,7 @@ import Image from "next/image"
 import { notFound } from "next/navigation"
 import { games } from "@/lib/mock-data"
 import { prisma } from "@/lib/prisma"
+import { getSellerRatings } from "@/lib/ratings"
 import GameListings from "@/app/components/GameListings"
 import NavBar from "@/app/components/NavBar"
 
@@ -12,10 +13,17 @@ export default async function GamePage({ params }: { params: Promise<{ id: strin
 
   if (!game) notFound()
 
-  const gameListings = await prisma.listing.findMany({
+  const listings = await prisma.listing.findMany({
     where: { gameId: id, isAvailable: true },
     orderBy: { createdAt: "desc" },
   })
+
+  const sellerRatings = await getSellerRatings(listings.map((l) => l.userId))
+
+  const gameListings = listings.map((listing) => ({
+    ...listing,
+    sellerRating: sellerRatings.get(listing.userId) ?? null,
+  }))
 
   return (
     <div className="min-h-screen flex flex-col">

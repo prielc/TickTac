@@ -12,6 +12,7 @@ type DbListing = {
   quantity: number
   phone: string | null
   isAvailable: boolean
+  sellerRating: { average: number; count: number } | null
 }
 
 type Props = {

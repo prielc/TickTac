@@ -3,6 +3,7 @@
 import { useState } from "react"
 import ContactModal from "./ContactModal"
 import ReportModal from "./ReportModal"
+import RatingBadge from "./RatingBadge"
 import { formatSeatInfo } from "@/lib/format"
 
 type DbListing = {
@@ -14,6 +15,7 @@ type DbListing = {
   quantity: number
   phone: string | null
   isAvailable: boolean
+  sellerRating: { average: number; count: number } | null
 }
 
 type Props = {
@@ -33,6 +35,9 @@ export default function ListingCard({ listing, gameName }: Props) {
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
               <span className="bg-green-100 text-green-700 text-xs font-semibold px-2 py-0.5 rounded-full">זמין</span>
+              {listing.sellerRating && (
+                <RatingBadge average={listing.sellerRating.average} count={listing.sellerRating.count} />
+              )}
             </div>
             <p className="text-zinc-900 font-bold text-base">{listing.section}</p>
             {seatInfo && <p className="text-zinc-500 text-sm">{seatInfo}</p>}

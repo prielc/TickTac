@@ -21,6 +21,8 @@ model User {
   listings      Listing[]
   sessions      Session[]
   reports       Report[]
+  ratingsGiven    Rating[] @relation("RatingsGiven")
+  ratingsReceived Rating[] @relation("RatingsReceived")
 }
 
 model Account {
@@ -74,6 +76,23 @@ model Listing {
   updatedAt   DateTime @updatedAt
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   reports     Report[]
+  ratings     Rating[]
+}
+
+model Rating {
+  id          String   @id @default(cuid())
+  raterId     String
+  ratedUserId String
+  listingId   String
+  score       Int
+  comment     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  rater       User     @relation("RatingsGiven", fields: [raterId], references: [id], onDelete: Cascade)
+  ratedUser   User     @relation("RatingsReceived", fields: [ratedUserId], references: [id], onDelete: Cascade)
+  listing     Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@unique([raterId, listingId])
 }
 
 model Report {
