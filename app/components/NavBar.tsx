@@ -9,6 +9,7 @@ export default function NavBar() {
   const pathname = usePathname()
 
   const isHome = pathname === "/"
+  const isSearch = pathname === "/search"
   const isTickets = pathname.startsWith("/games")
   const isProfile = pathname === "/profile"
 
@@ -23,17 +24,12 @@ export default function NavBar() {
             <span className={`text-xs ${isHome ? "text-primary font-medium" : "text-zinc-500"}`}>בית</span>
           </Link>
 
-          <button className="flex flex-col items-center gap-1 py-1" aria-label="חיפוש" disabled>
-            <div className="relative">
-              <svg className="w-6 h-6 text-zinc-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              <span className="absolute -top-1 -left-1 bg-primary text-black text-[8px] font-bold px-1 py-px rounded-full leading-none">
-                בקרוב
-              </span>
-            </div>
-            <span className="text-xs text-zinc-300">חיפוש</span>
-          </button>
+          <Link href="/search" className="flex flex-col items-center gap-1 py-1" aria-label="חיפוש">
+            <svg className={`w-6 h-6 ${isSearch ? "text-primary" : "text-zinc-500"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <span className={`text-xs ${isSearch ? "text-primary font-medium" : "text-zinc-500"}`}>חיפוש</span>
+          </Link>
 
           <Link href="/sell" className="flex flex-col items-center -mt-5" aria-label="מכירה">
             <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center shadow-lg">
