@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import ContactModal from "./ContactModal"
+import ReportModal from "./ReportModal"
 import { formatSeatInfo } from "@/lib/format"
 
 type DbListing = {
@@ -22,6 +23,7 @@ type Props = {
 
 export default function ListingCard({ listing, gameName }: Props) {
   const [modalOpen, setModalOpen] = useState(false)
+  const [reportOpen, setReportOpen] = useState(false)
   const seatInfo = formatSeatInfo(listing.row, listing.seats)
 
   return (
@@ -47,6 +49,15 @@ export default function ListingCard({ listing, gameName }: Props) {
             </button>
           </div>
         </div>
+
+        <div className="mt-2 text-left">
+          <button
+            onClick={() => setReportOpen(true)}
+            className="text-zinc-400 text-xs underline"
+          >
+            דיווח על מודעה
+          </button>
+        </div>
       </div>
 
       <ContactModal
@@ -54,6 +65,12 @@ export default function ListingCard({ listing, gameName }: Props) {
         onClose={() => setModalOpen(false)}
         listing={listing}
         gameName={gameName}
+      />
+
+      <ReportModal
+        isOpen={reportOpen}
+        onClose={() => setReportOpen(false)}
+        listingId={listing.id}
       />
     </>
   )
