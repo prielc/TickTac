@@ -40,7 +40,7 @@ postgresql://postgres.czqgufsdoqoterqdpaiz:[PASSWORD]@aws-0-eu-west-3.pooler.sup
 | הרשמה | `/register` | שם, אימייל, טלפון (ולידציה client+server), סיסמה |
 | כניסה | `/login` | אימייל + סיסמה |
 | פרסום כרטיס | `/sell` | בחירת משחק, יציע, שורה/מקומות, מחיר/כמות (טלפון נלקח אוטומטית מהפרופיל) |
-| פרופיל | `/profile` | שם, אימייל, טלפון של המשתמש המחובר + כפתור התנתקות. דורש התחברות (אחרת מפנה ל-`/login`) |
+| פרופיל | `/profile` | שם, אימייל, טלפון של המשתמש המחובר, עם אפשרות עריכה (שם+טלפון, inline) + כפתור התנתקות. דורש התחברות (אחרת מפנה ל-`/login`) |
 
 ## פיצ'רים מרכזיים שמומשו
 1. **זרימת מוכר:** הרשמה → פרסום כרטיס → נשמר ב-Supabase
@@ -48,6 +48,7 @@ postgresql://postgres.czqgufsdoqoterqdpaiz:[PASSWORD]@aws-0-eu-west-3.pooler.sup
 3. **לוגואים אמיתיים** לכל הקבוצות (הורדו מ-Wikipedia ל-`public/teams/`)
 4. **ולידציה מלאה** בהרשמה (שם, אימייל, טלפון ישראלי, סיסמה) — `lib/validation.ts` משותף ל-client ו-API
 5. **ניווט:** NavBar קבוע למטה, "חיפוש" מסומן כ-"בקרוב" (מושבת); אייקון הפרופיל (עם שם המשתמש) מוביל לדף `/profile` ולא מתנתק ישירות
+6. **עריכת פרופיל:** בדף `/profile` כפתור "ערוך" הופך את התצוגה לטופס inline לעריכת שם וטלפון (`app/components/ProfileDetails.tsx`, `PATCH /api/profile`); לאחר שמירה השם מתעדכן מיידית גם ב-NavBar (session update + `auth.ts` callbacks)
 
 ## מבנה קבצים מרכזי
 ```
@@ -58,8 +59,9 @@ app/
   login/, register/         # auth pages
   api/auth/                 # NextAuth + register endpoint
   api/listings/             # POST listing
-  profile/page.tsx          # פרופיל משתמש + התנתקות
-  components/               # GameCard, ListingCard, ContactModal, NavBar, SignOutButton
+  profile/page.tsx          # פרופיל משתמש + עריכה + התנתקות
+  api/profile/route.ts     # PATCH עריכת שם/טלפון
+  components/               # GameCard, ListingCard, ContactModal, NavBar, SignOutButton, ProfileDetails
 lib/
   mock-data.ts              # משחקים (קבוע)
   prisma.ts                 # Prisma singleton + adapter
@@ -78,4 +80,4 @@ public/teams/                # לוגואי קבוצות
 - סימון כרטיס כ"נמכר" ע"י המוכר
 - צ'אט פנימי באתר
 - הוספת משחקים/קבוצות/ענפי ספורט נוספים (כרגע רק ביתר ירושלים, mock data)
-- עריכת פרטי פרופיל והיסטוריית מודעות (כרגע `/profile` מציג פרטים בלבד + התנתקות)
+- היסטוריית מודעות בדף `/profile`

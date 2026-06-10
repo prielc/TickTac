@@ -5,6 +5,7 @@ import { authOptions } from "@/auth"
 import { prisma } from "@/lib/prisma"
 import NavBar from "@/app/components/NavBar"
 import SignOutButton from "@/app/components/SignOutButton"
+import ProfileDetails from "@/app/components/ProfileDetails"
 
 export default async function ProfilePage() {
   const session = await getServerSession(authOptions)
@@ -35,20 +36,7 @@ export default async function ProfilePage() {
       </header>
 
       <main className="flex-1 px-4 pt-6 pb-28 max-w-lg mx-auto w-full">
-        <div className="bg-gray-50 rounded-xl p-4 mb-6 space-y-4">
-          <div>
-            <p className="text-zinc-400 text-xs mb-1">שם מלא</p>
-            <p className="text-zinc-900 font-bold">{user.name ?? "—"}</p>
-          </div>
-          <div>
-            <p className="text-zinc-400 text-xs mb-1">אימייל</p>
-            <p className="text-zinc-900 font-bold">{user.email}</p>
-          </div>
-          <div>
-            <p className="text-zinc-400 text-xs mb-1">טלפון</p>
-            <p className="text-zinc-900 font-bold">{user.phone ?? "—"}</p>
-          </div>
-        </div>
+        <ProfileDetails email={user.email} initialName={user.name ?? ""} initialPhone={user.phone ?? ""} />
 
         <SignOutButton />
       </main>
