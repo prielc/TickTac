@@ -18,3 +18,9 @@
 5. "Every time I correct you, add a new rule to the CLAUDE .md file so it never happens again."
 
 6. "Every meaningful change must be committed to git with a clear message. After completing each development stage, push to GitHub. Never leave working code uncommitted."
+
+7. "Keep README.md, CLAUDE.md, and PROJECT_SUMMARY.md up to date as the project evolves, each according to its own purpose:
+   - **README.md** (public-facing): project pitch, live link, tech stack list, quick start. Update when the tech stack, live URL, or what-currently-works summary changes.
+   - **CLAUDE.md** (this file): working rules + a short project snapshot at the top. Update the snapshot when the business focus or core stack changes; add new rules per rule 5.
+   - **PROJECT_SUMMARY.md** (detailed reference): architecture, file structure, data model, features built, features pending. Update after each meaningful development stage.
+   Keep the cross-links between these three files intact."

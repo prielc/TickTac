@@ -23,13 +23,22 @@
 
 ## סטטוס
 
-> בפיתוח פעיל
+> בפיתוח פעיל — גרסה ראשונית חיה ב-production
+
+🔗 **אתר חי:** https://tick-tac-nu.vercel.app
+
+מה כבר עובד: הרשמה/התחברות, פרסום כרטיס למכירה, צפייה בכרטיסים זמינים למשחק, ויצירת קשר עם המוכר דרך WhatsApp/טלפון.
+
+לפירוט מלא על הארכיטקטורה, מה נבנה ומה עוד לא — ראו [PROJECT_SUMMARY.md](./PROJECT_SUMMARY.md).
 
 ## טכנולוגיות
 
 - **Framework:** Next.js (App Router)
 - **Language:** TypeScript
 - **Styling:** Tailwind CSS
+- **Database:** PostgreSQL (Supabase)
+- **ORM:** Prisma
+- **Auth:** NextAuth.js
 - **Deployment:** Vercel
 
 ## התחלה מהירה
