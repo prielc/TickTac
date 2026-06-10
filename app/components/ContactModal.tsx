@@ -1,5 +1,7 @@
 "use client"
 
+import { formatSeatInfo } from "@/lib/format"
+
 type Props = {
   isOpen: boolean
   onClose: () => void
@@ -17,9 +19,11 @@ type Props = {
 export default function ContactModal({ isOpen, onClose, listing, gameName }: Props) {
   if (!isOpen) return null
 
+  const seatInfo = formatSeatInfo(listing.row, listing.seats)
+
   const whatsappMessage = encodeURIComponent(
     `היי, ראיתי את המודעה שלך ב-TickTac לכרטיסים למשחק ${gameName}.\n` +
-    `יציע ${listing.section}, שורה ${listing.row}, כיסאות ${listing.seats}.\n` +
+    `יציע ${listing.section}${seatInfo ? `, ${seatInfo}` : ""}.\n` +
     `מחיר: ₪${listing.price} לכרטיס.\n` +
     `אני מעוניין/ת לקנות.`
   )
@@ -45,7 +49,7 @@ export default function ContactModal({ isOpen, onClose, listing, gameName }: Pro
 
         <div className="bg-gray-50 rounded-xl p-4 mb-5 space-y-1">
           <p className="text-zinc-900 font-bold">{listing.section}</p>
-          <p className="text-zinc-500 text-sm">שורה {listing.row}, כיסאות {listing.seats}</p>
+          {seatInfo && <p className="text-zinc-500 text-sm">{seatInfo}</p>}
           <p className="text-zinc-500 text-sm">{listing.quantity} כרטיסים</p>
           <p className="text-primary font-black text-lg">₪{listing.price} לכרטיס</p>
         </div>

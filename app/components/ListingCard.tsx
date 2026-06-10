@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import ContactModal from "./ContactModal"
+import { formatSeatInfo } from "@/lib/format"
 
 type DbListing = {
   id: string
@@ -21,6 +22,7 @@ type Props = {
 
 export default function ListingCard({ listing, gameName }: Props) {
   const [modalOpen, setModalOpen] = useState(false)
+  const seatInfo = formatSeatInfo(listing.row, listing.seats)
 
   return (
     <>
@@ -31,7 +33,7 @@ export default function ListingCard({ listing, gameName }: Props) {
               <span className="bg-green-100 text-green-700 text-xs font-semibold px-2 py-0.5 rounded-full">זמין</span>
             </div>
             <p className="text-zinc-900 font-bold text-base">{listing.section}</p>
-            <p className="text-zinc-500 text-sm">שורה {listing.row}, כיסאות {listing.seats}</p>
+            {seatInfo && <p className="text-zinc-500 text-sm">{seatInfo}</p>}
             <p className="text-zinc-400 text-xs mt-1">{listing.quantity} כרטיסים</p>
           </div>
 
