@@ -6,12 +6,6 @@ export default function GameCard({ game, availableTickets }: { game: Game; avail
   return (
     <Link href={`/games/${game.id}`} className="block">
       <div className="bg-white rounded-2xl p-4 relative border border-gray-200 shadow-sm active:border-gray-300 transition-colors">
-        {game.isSelling && (
-          <span className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
-            נמכר מהר!
-          </span>
-        )}
-
         <p className="text-center text-xs text-zinc-400 mb-4">{game.competition}</p>
 
         <div className="flex items-center justify-between mb-5">

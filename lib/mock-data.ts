@@ -7,7 +7,6 @@ export type Game = {
   date: string
   time: string
   stadium: string
-  isSelling: boolean
   competition: string
 }
 
@@ -21,7 +20,6 @@ export const games: Game[] = [
     date: "יום שני, 26.08.2024",
     time: "20:30",
     stadium: "אצטדיון טדי, ירושלים",
-    isSelling: true,
     competition: "ליגת העל",
   },
   {
@@ -33,7 +31,6 @@ export const games: Game[] = [
     date: "שבת, 07.09.2024",
     time: "19:00",
     stadium: "אצטדיון טדי, ירושלים",
-    isSelling: true,
     competition: "ליגת העל",
   },
   {
@@ -45,7 +42,6 @@ export const games: Game[] = [
     date: "שבת, 21.09.2024",
     time: "20:00",
     stadium: "אצטדיון טדי, ירושלים",
-    isSelling: false,
     competition: "ליגת העל",
   },
   {
@@ -57,7 +53,6 @@ export const games: Game[] = [
     date: "שבת, 05.10.2024",
     time: "20:00",
     stadium: "אצטדיון טדי, ירושלים",
-    isSelling: false,
     competition: "ליגת העל",
   },
 ]
