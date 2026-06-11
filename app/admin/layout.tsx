@@ -28,6 +28,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <Link href="/admin/listings" className="px-3 py-1.5 rounded-full text-sm font-medium bg-gray-100 text-zinc-700 whitespace-nowrap">
           מודעות
         </Link>
+        <Link href="/admin/users" className="px-3 py-1.5 rounded-full text-sm font-medium bg-gray-100 text-zinc-700 whitespace-nowrap">
+          משתמשים
+        </Link>
       </nav>
 
       <main className="flex-1 px-4 py-6 max-w-2xl mx-auto w-full">{children}</main>

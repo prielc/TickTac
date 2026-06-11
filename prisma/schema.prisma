@@ -16,6 +16,7 @@ model User {
   password      String?
   phone         String?
   role          String    @default("user")
+  isBanned      Boolean   @default(false)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   accounts      Account[]
