@@ -102,6 +102,7 @@ model Report {
   listingId   String
   reason      String
   description String?
+  status      String   @default("open")
   createdAt   DateTime @default(now())
   reporter    User     @relation(fields: [reporterId], references: [id], onDelete: Cascade)
   listing     Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
