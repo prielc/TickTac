@@ -3,10 +3,9 @@
 _עודכן: 2026-06-12_
 
 > **עדכונים אחרונים:**
-> - **התחברות/הרשמה הופכות לבלעדיות עם Google (OAuth)**: הוסרה התחברות בסיסמה (`CredentialsProvider`, bcrypt) ומסך ההרשמה. `/login` מציג כפתור "התחבר עם Google" בלבד, `/register` מפנה ל-`/login`. משתמש חדש נוצר אוטומטית ב-DB לפי email בכניסה הראשונה. ראו פירוט בסעיף "אימות והתחברות (Google OAuth)" למטה.
+> - **השלמת טלפון חובה** לאחר הרשמה עם Google: `middleware.ts` מפנה משתמש מחובר בלי `phone` ל-`/complete-profile` וחוסם גישה לכל שאר האתר עד למילוי. ראו "אימות והתחברות (Google OAuth)" למטה.
+> - **התחברות/הרשמה הופכות לבלעדיות עם Google (OAuth)**: הוסרה התחברות בסיסמה (`CredentialsProvider`, bcrypt) ומסך ההרשמה. `/login` מציג כפתור "התחבר עם Google" בלבד, `/register` מפנה ל-`/login`. משתמש חדש נוצר אוטומטית ב-DB לפי email בכניסה הראשונה.
 > - נוסף **מסך ניהול לאדמין** (`/admin`) עם הגנת הרשאה, ניהול דיווחים/מודעות/משתמשים/דירוגים, ודשבורד עסקי + טכני עם גרפים. פירוט מלא בסעיף "מסך ניהול אדמין" למטה.
-> - מספר "כרטיסים זמינים" בדף הבית ובדף המשחק מחושב עכשיו בזמן אמת מסכום שדה `quantity` של המודעות הפעילות ב-DB (במקום ערך קבוע ב-mock data או ספירת שורות מודעות).
-> - הוסר התג "נמכר מהר!" מכרטיסי המשחקים בדף הבית, כולל השדה `isSelling` שכבר לא היה בשימוש.
 
 > לכללי עבודה ולתקציר קצר ראו גם [CLAUDE.md](./CLAUDE.md)
 
@@ -36,7 +35,7 @@ postgresql://postgres.czqgufsdoqoterqdpaiz:[PASSWORD]@aws-0-eu-west-3.pooler.sup
 ## מבנה נתונים
 - **Games (משחקים):** קבועים ב-`lib/mock-data.ts` — לא ב-DB. כל משחק: קבוצות, לוגואים (`public/teams/`), תאריך, אצטדיון, תחרות.
 - **Listings (כרטיסים למכירה):** ב-DB (Prisma model `Listing`) — gameId, section, row, seats, price, quantity, phone, isAvailable.
-- **User:** email, name, image (מ-Google), phone (אופציונלי — מתבקש לאחר הרשמה דרך באנר ב-`/profile`), **role** (`"user"`/`"admin"`, ברירת מחדל `"user"`), **isBanned** (Boolean, ברירת מחדל `false` — משתמש חסום לא יכול להתחבר). שדה `password` עדיין קיים בסכמה (legacy) אך לא בשימוש.
+- **User:** email, name, image (מ-Google), phone (חובה — נאסף ב-`/complete-profile` לאחר הרשמה), **role** (`"user"`/`"admin"`, ברירת מחדל `"user"`), **isBanned** (Boolean, ברירת מחדל `false` — משתמש חסום לא יכול להתחבר). שדה `password` עדיין קיים בסכמה (legacy) אך לא בשימוש.
 - **Report (דיווחים):** ב-DB (Prisma model `Report`) — reporterId, listingId, reason, description, **status** (`"open"`/`"resolved"`, ברירת מחדל `"open"`), createdAt. סיבות אפשריות מוגדרות ב-`lib/report-reasons.ts`.
 - **Rating (דירוגים):** ב-DB (Prisma model `Rating`) — raterId, ratedUserId, listingId, score (1-5), comment, createdAt/updatedAt. ייחודי לכל זוג (raterId, listingId) — דירוג חוזר על אותה מודעה מעדכן (upsert) ולא יוצר רשומה נוספת.
 
@@ -48,7 +47,8 @@ postgresql://postgres.czqgufsdoqoterqdpaiz:[PASSWORD]@aws-0-eu-west-3.pooler.sup
 | כניסה / הרשמה | `/login` | כפתור "התחבר עם Google" בלבד — הרשמה אוטומטית בכניסה הראשונה |
 | הרשמה (legacy) | `/register` | מפנה (redirect) ל-`/login` |
 | פרסום כרטיס | `/sell` | בחירת משחק, יציע, שורה/מקומות, מחיר/כמות (טלפון נלקח אוטומטית מהפרופיל) |
-| פרופיל | `/profile` | שם, אימייל, טלפון של המשתמש המחובר, עם אפשרות עריכה (שם+טלפון, inline) + כפתור התנתקות. דורש התחברות (אחרת מפנה ל-`/login`). אם אין טלפון שמור — באנר שמבקש להשלים אותו |
+| פרופיל | `/profile` | שם, אימייל, טלפון של המשתמש המחובר, עם אפשרות עריכה (שם+טלפון, inline) + כפתור התנתקות. דורש התחברות (אחרת מפנה ל-`/login`) |
+| השלמת פרופיל | `/complete-profile` | מסך חובה למשתמש מחובר שאין לו טלפון ב-DB — לא ניתן לגשת לשום מסך אחר עד שמילוי טלפון תקין |
 | המודעות שלי | `/profile/listings` | רשימת כל המודעות שפרסם המשתמש המחובר, עם תגית סטטוס (זמין/נמכר) וכפתור טוגל לסימון כנמכר/זמין |
 | חיפוש | `/search` | שדה חיפוש שמסנן את רשימת המשחקים לפי קבוצה/יריבה/אצטדיון/תחרות, עם הודעת "לא נמצאו תוצאות" וקישור לבית |
 | ניהול (אדמין) | `/admin` | דשבורד עסקי: כרטיסי סיכום + גרפים. נגיש רק ל-`role: admin` |
@@ -77,7 +77,7 @@ postgresql://postgres.czqgufsdoqoterqdpaiz:[PASSWORD]@aws-0-eu-west-3.pooler.sup
 - **find-or-create לפי email**: ב-`signIn` callback — אם קיים `User` עם אותו email, מתחברים לחשבון הקיים (משמרים `role`/`isBanned`/מודעות/דירוגים); אם לא קיים, נוצר `User` חדש (`role: "user"`, `isBanned: false`, `emailVerified` מסומן אוטומטית).
 - **חסימה**: משתמש עם `isBanned: true` נחסם בכניסה (signIn מחזיר `false`).
 - **`/login`**: כפתור "התחבר עם Google" יחיד. **`/register`**: redirect ל-`/login` (נשאר לתאימות לקישורים ישנים).
-- **טלפון**: Google לא מספק מספר טלפון; משתמש חדש נכנס בלי טלפון, ובדף `/profile` מוצג באנר שמבקש להשלים אותו (חובה כדי שקונים יוכלו ליצור קשר בוואטסאפ על המודעות שלו).
+- **טלפון חובה**: Google לא מספק מספר טלפון. `middleware.ts` בודק על כל בקשה (חוץ מ-`/login`, `/complete-profile` ו-`/api/**`) אם למשתמש המחובר אין `phone` ב-session/JWT — אם אין, מפנה ל-`/complete-profile`, מסך ייעודי (`app/complete-profile/page.tsx`) שחוסם המשך גלישה עד שמילוי טלפון תקין (`PATCH /api/profile`). השדה `phone` מועבר ל-session/JWT דרך `auth.ts`/`types/next-auth.d.ts`, ומתעדכן בזמן אמת (`useSession().update`) ללא צורך בהתנתקות.
 
 ## מסך ניהול אדמין (`/admin`)
 
@@ -109,6 +109,7 @@ app/
   sell/page.tsx             # פרסום כרטיס
   login/page.tsx            # כפתור "התחבר עם Google"
   register/page.tsx         # redirect ל-/login
+  complete-profile/page.tsx # מסך חובה להשלמת טלפון (gate ע"י middleware.ts)
   api/auth/                 # NextAuth (Google provider)
   api/listings/             # POST listing
   profile/page.tsx          # פרופיל משתמש + עריכה + התנתקות
@@ -131,7 +132,8 @@ lib/
   admin.ts                  # requireAdmin() — guard להרשאת אדמין
   admin-stats.ts            # שאילתות לדשבורד עסקי/טכני
 prisma/schema.prisma         # User (role, isBanned), Account, Session, Listing, Report (status), Rating
-types/next-auth.d.ts         # הרחבת טיפוסי NextAuth עם role
+types/next-auth.d.ts         # הרחבת טיפוסי NextAuth עם role, phone
+middleware.ts                 # gate: מפנה משתמש מחובר בלי phone ל-/complete-profile
 public/teams/                # לוגואי קבוצות
 ```
 
