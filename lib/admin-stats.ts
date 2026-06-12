@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma"
+import { REPORT_REASONS } from "@/lib/report-reasons"
 
 export type DailyCount = { date: string; count: number }
 
@@ -54,4 +55,30 @@ export async function getOverviewStats(): Promise<OverviewStats> {
   ])
 
   return { totalUsers, activeListings, openReports, totalRatings }
+}
+
+export type ReasonCount = { reason: string; count: number }
+
+export async function getReportsByReason(): Promise<ReasonCount[]> {
+  const grouped = await prisma.report.groupBy({
+    by: ["reason"],
+    _count: { reason: true },
+  })
+
+  const counts = new Map(grouped.map((row) => [row.reason, row._count.reason]))
+
+  return REPORT_REASONS.map((reason) => ({ reason, count: counts.get(reason) ?? 0 }))
+}
+
+export type ScoreCount = { score: number; count: number }
+
+export async function getRatingDistribution(): Promise<ScoreCount[]> {
+  const grouped = await prisma.rating.groupBy({
+    by: ["score"],
+    _count: { score: true },
+  })
+
+  const counts = new Map(grouped.map((row) => [row.score, row._count.score]))
+
+  return [1, 2, 3, 4, 5].map((score) => ({ score, count: counts.get(score) ?? 0 }))
 }
