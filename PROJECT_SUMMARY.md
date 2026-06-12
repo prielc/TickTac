@@ -1,8 +1,9 @@
 # TickTac — סיכום פרויקט
 
-_עודכן: 2026-06-11_
+_עודכן: 2026-06-12_
 
 > **עדכונים אחרונים:**
+> - נוסף **מסך ניהול לאדמין** (`/admin`) עם הגנת הרשאה, ניהול דיווחים/מודעות/משתמשים/דירוגים, ודשבורד עסקי + טכני עם גרפים. פירוט מלא בסעיף "מסך ניהול אדמין" למטה.
 > - מספר "כרטיסים זמינים" בדף הבית ובדף המשחק מחושב עכשיו בזמן אמת מסכום שדה `quantity` של המודעות הפעילות ב-DB (במקום ערך קבוע ב-mock data או ספירת שורות מודעות).
 > - הוסר התג "נמכר מהר!" מכרטיסי המשחקים בדף הבית, כולל השדה `isSelling` שכבר לא היה בשימוש.
 
@@ -34,8 +35,8 @@ postgresql://postgres.czqgufsdoqoterqdpaiz:[PASSWORD]@aws-0-eu-west-3.pooler.sup
 ## מבנה נתונים
 - **Games (משחקים):** קבועים ב-`lib/mock-data.ts` — לא ב-DB. כל משחק: קבוצות, לוגואים (`public/teams/`), תאריך, אצטדיון, תחרות.
 - **Listings (כרטיסים למכירה):** ב-DB (Prisma model `Listing`) — gameId, section, row, seats, price, quantity, phone, isAvailable.
-- **User:** email, password (hash), name, **phone (חובה בהרשמה)**.
-- **Report (דיווחים):** ב-DB (Prisma model `Report`) — reporterId, listingId, reason, description, createdAt. סיבות אפשריות מוגדרות ב-`lib/report-reasons.ts`.
+- **User:** email, password (hash), name, **phone (חובה בהרשמה)**, **role** (`"user"`/`"admin"`, ברירת מחדל `"user"`), **isBanned** (Boolean, ברירת מחדל `false` — משתמש חסום לא יכול להתחבר).
+- **Report (דיווחים):** ב-DB (Prisma model `Report`) — reporterId, listingId, reason, description, **status** (`"open"`/`"resolved"`, ברירת מחדל `"open"`), createdAt. סיבות אפשריות מוגדרות ב-`lib/report-reasons.ts`.
 - **Rating (דירוגים):** ב-DB (Prisma model `Rating`) — raterId, ratedUserId, listingId, score (1-5), comment, createdAt/updatedAt. ייחודי לכל זוג (raterId, listingId) — דירוג חוזר על אותה מודעה מעדכן (upsert) ולא יוצר רשומה נוספת.
 
 ## מסכים שנבנו
@@ -49,6 +50,12 @@ postgresql://postgres.czqgufsdoqoterqdpaiz:[PASSWORD]@aws-0-eu-west-3.pooler.sup
 | פרופיל | `/profile` | שם, אימייל, טלפון של המשתמש המחובר, עם אפשרות עריכה (שם+טלפון, inline) + כפתור התנתקות. דורש התחברות (אחרת מפנה ל-`/login`) |
 | המודעות שלי | `/profile/listings` | רשימת כל המודעות שפרסם המשתמש המחובר, עם תגית סטטוס (זמין/נמכר) וכפתור טוגל לסימון כנמכר/זמין |
 | חיפוש | `/search` | שדה חיפוש שמסנן את רשימת המשחקים לפי קבוצה/יריבה/אצטדיון/תחרות, עם הודעת "לא נמצאו תוצאות" וקישור לבית |
+| ניהול (אדמין) | `/admin` | דשבורד עסקי: כרטיסי סיכום + גרפים. נגיש רק ל-`role: admin` |
+| ניהול דיווחים | `/admin/reports` | רשימת כל הדיווחים, סימון טופל/פתוח |
+| ניהול מודעות | `/admin/listings` | כל המודעות (כולל נמכר/מוסתר), הסתרה/הצגה/מחיקה |
+| ניהול משתמשים | `/admin/users` | רשימת משתמשים + סטטיסטיקות, חסימה, קידום/הורדה מאדמין, מחיקה |
+| ניהול דירוגים | `/admin/ratings` | רשימת כל הדירוגים וההערות, מחיקת דירוג |
+| דשבורד טכני | `/admin/technical` | בריאות חיבור ל-DB + גידול בטבלאות (7/30 יום) |
 
 ## פיצ'רים מרכזיים שמומשו
 1. **זרימת מוכר:** הרשמה → פרסום כרטיס → נשמר ב-Supabase
@@ -62,6 +69,28 @@ postgresql://postgres.czqgufsdoqoterqdpaiz:[PASSWORD]@aws-0-eu-west-3.pooler.sup
 9. **חיפוש משחקים:** `/search` — סינון client-side של `lib/mock-data.ts` לפי שם קבוצה/יריבה/אצטדיון/תחרות; תשתית שתקבל ערך גדול יותר ככל שיתווספו עוד משחקים/קבוצות
 10. **דיווח על מודעות חשודות:** קישור "דיווח על מודעה" בכל `ListingCard` פותח `app/components/ReportModal.tsx`; משתמש לא מחובר מופנה להתחברות, משתמש מחובר בוחר סיבה (מתוך `lib/report-reasons.ts`) ומוסיף תיאור חופשי, ושולח ל-`POST /api/reports`. ה-API דורש התחברות, מונע דיווח על מודעה של המשתמש עצמו, ושומר את הדיווח ב-DB (`Report`) לבדיקה ידנית — אין כרגע מסך ניהול דיווחים
 11. **דירוג משתמשים:** כפתור "דרגו את המוכר" בתוך `ContactModal` פותח `app/components/RatingModal.tsx` — משתמש לא מחובר מופנה להתחברות, משתמש מחובר בוחר 1-5 כוכבים + הערה חופשית ושולח ל-`POST /api/ratings` (דורש התחברות, מונע דירוג עצמי, upsert לפי raterId+listingId). הדירוג הממוצע + מספר הדירוגים של כל מוכר מחושב ב-`lib/ratings.ts` (`getSellerRatings`) ומוצג כתג `RatingBadge` (★ ממוצע (כמות)) על כל מודעה שלו בדף המשחק — מבוסס אמון, ללא אימות שהתבצעה עסקה בפועל
+12. **מסך ניהול אדמין (`/admin`):** ראו פירוט מלא בסעיף הבא
+
+## מסך ניהול אדמין (`/admin`)
+
+### הרשאות
+- שדה `role` ("user"/"admin") ושדה `isBanned` (Boolean) על `User`. `role` ו-`isBanned` נטענים ל-session/JWT (`auth.ts`, `types/next-auth.d.ts`).
+- `lib/admin.ts` (`requireAdmin()`) — מחזיר session רק אם `role === "admin"`, אחרת `null`.
+- `app/admin/layout.tsx` — מפנה ל-`/` כל משתמש שאינו admin; כולל ניווט בין כל מסכי הניהול.
+- משתמש חסום (`isBanned: true`) לא יכול להתחבר (`auth.ts` → `authorize()`).
+- כדי לקבל הרשאת אדמין יש לעדכן ידנית את `role` של המשתמש ב-DB (אין מסך הרשמה לאדמין).
+
+### מסכי ניהול
+- **דיווחים** (`/admin/reports`, `app/api/admin/reports/[id]/route.ts`): רשימת כל הדיווחים עם פרטי המודעה/מוכר/מדווח, וכפתור החלפת `status` (open/resolved) דרך `ReportStatusButton`.
+- **מודעות** (`/admin/listings`, `app/api/admin/listings/[id]/route.ts`): כל המודעות במערכת (כולל מוסתרות), עם `ListingActions` להחלפת `isAvailable` (הסתר/הצג) ולמחיקה מוחלטת (cascade למחיקת דיווחים/דירוגים קשורים).
+- **משתמשים** (`/admin/users`, `app/api/admin/users/[id]/route.ts`): רשימת משתמשים + מספר מודעות + דירוג ממוצע, עם `UserActions` לחסימה/שחרור, קידום/הורדה מ-admin, ומחיקה. אדמין לא יכול לבצע פעולות אלו על עצמו (הגנה ב-API לפי השוואת email).
+- **דירוגים** (`/admin/ratings`, `app/api/admin/ratings/[id]/route.ts`): רשימת כל הדירוגים/ההערות עם `DeleteRatingButton` למחיקה.
+
+### דשבורד עסקי (`/admin`, `lib/admin-stats.ts`)
+גרפים מבוססי `recharts`: כרטיסי סיכום (סה"כ משתמשים/מודעות פעילות/דיווחים פתוחים/דירוגים), הרשמות יומיות ל-30 יום (`SignupsChart`), סטטוס מודעות זמין/נמכר (`ListingsStatusChart`), דיווחים לפי סיבה (`ReportsByReasonChart`), התפלגות ציוני דירוג (`RatingDistributionChart`).
+
+### דשבורד טכני (`/admin/technical`)
+בריאות חיבור ל-DB (`SELECT 1` + latency) וגידול בכל טבלה (סה"כ / 7 ימים / 30 ימים) — ללא תלות בשירות חיצוני. הרחבה אפשרית בעתיד: הפעלת Vercel Analytics / Speed Insights.
 
 ## מבנה קבצים מרכזי
 ```
@@ -80,6 +109,9 @@ app/
   api/reports/route.ts     # POST דיווח על מודעה
   api/ratings/route.ts     # POST דירוג מוכר
   components/               # GameCard, ListingCard, GameListings, ContactModal, ReportModal, RatingModal, RatingBadge, NavBar, SignOutButton, ProfileDetails, MyListingItem
+  components/admin/         # SignupsChart, ListingsStatusChart, ReportsByReasonChart, RatingDistributionChart, ReportStatusButton, ListingActions, UserActions, DeleteRatingButton
+  admin/                     # layout.tsx (הגנת admin + ניווט) + page.tsx (דשבורד), reports/, listings/, users/, ratings/, technical/
+  api/admin/                 # reports/[id], listings/[id], users/[id], ratings/[id] — endpoints מוגני requireAdmin()
 lib/
   mock-data.ts              # משחקים (קבוע)
   prisma.ts                 # Prisma singleton + adapter
@@ -87,7 +119,10 @@ lib/
   validation.test.ts        # בדיקות יחידה (Vitest) ל-isValidIsraeliPhone
   report-reasons.ts         # רשימת סיבות דיווח משותפת ל-API ול-UI
   ratings.ts                # חישוב ממוצע/כמות דירוגים למוכר + ולידציית ציון
-prisma/schema.prisma         # User, Account, Session, Listing, Report, Rating
+  admin.ts                  # requireAdmin() — guard להרשאת אדמין
+  admin-stats.ts            # שאילתות לדשבורד עסקי/טכני
+prisma/schema.prisma         # User (role, isBanned), Account, Session, Listing, Report (status), Rating
+types/next-auth.d.ts         # הרחבת טיפוסי NextAuth עם role
 public/teams/                # לוגואי קבוצות
 ```
 
@@ -99,7 +134,6 @@ public/teams/                # לוגואי קבוצות
 ✅ End-to-end נבדק: הרשמה → התחברות → פרסום כרטיס → הופעה בדף המשחק → יצירת קשר עם מוכר
 
 ## מה עוד לא נבנה (רעיונות להמשך)
-- מסך ניהול לדיווחים שהתקבלו (כרגע נשמרים ב-DB בלבד, לבדיקה ידנית)
 - הצגת הערות הדירוג (comments) למוכר — כרגע רק ממוצע+כמות מוצגים, ההערות נשמרות ב-DB בלבד
 - צ'אט פנימי באתר
 - התראות (push/אימייל על מודעות חדשות לפי קריטריונים)
