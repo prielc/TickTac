@@ -34,15 +34,20 @@ export const authOptions: NextAuthOptions = {
 
       user.id = dbUser.id
       user.role = dbUser.role
+      user.phone = dbUser.phone
 
       return true
     },
     async jwt({ token, user, trigger, session }) {
       if (user) {
         token.role = user.role
+        token.phone = user.phone
       }
       if (trigger === "update" && session?.name) {
         token.name = session.name
+      }
+      if (trigger === "update" && session?.phone) {
+        token.phone = session.phone
       }
       return token
     },
@@ -50,6 +55,7 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         session.user.name = token.name
         session.user.role = token.role
+        session.user.phone = token.phone
       }
       return session
     },

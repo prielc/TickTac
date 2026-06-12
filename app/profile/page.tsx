@@ -36,12 +36,6 @@ export default async function ProfilePage() {
       </header>
 
       <main className="flex-1 px-4 pt-6 pb-28 max-w-lg mx-auto w-full">
-        {!user.phone && (
-          <div className="mb-4 px-4 py-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-sm">
-            כדי שקונים יוכלו ליצור איתך קשר בוואטסאפ, השלם מספר טלפון בפרטים שלך למטה.
-          </div>
-        )}
-
         <ProfileDetails email={user.email} initialName={user.name ?? ""} initialPhone={user.phone ?? ""} />
 
         <div className="space-y-3 mb-6">
