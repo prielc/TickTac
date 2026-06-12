@@ -3,6 +3,7 @@
 _עודכן: 2026-06-12_
 
 > **עדכונים אחרונים:**
+> - **התחברות/הרשמה הופכות לבלעדיות עם Google (OAuth)**: הוסרה התחברות בסיסמה (`CredentialsProvider`, bcrypt) ומסך ההרשמה. `/login` מציג כפתור "התחבר עם Google" בלבד, `/register` מפנה ל-`/login`. משתמש חדש נוצר אוטומטית ב-DB לפי email בכניסה הראשונה. ראו פירוט בסעיף "אימות והתחברות (Google OAuth)" למטה.
 > - נוסף **מסך ניהול לאדמין** (`/admin`) עם הגנת הרשאה, ניהול דיווחים/מודעות/משתמשים/דירוגים, ודשבורד עסקי + טכני עם גרפים. פירוט מלא בסעיף "מסך ניהול אדמין" למטה.
 > - מספר "כרטיסים זמינים" בדף הבית ובדף המשחק מחושב עכשיו בזמן אמת מסכום שדה `quantity` של המודעות הפעילות ב-DB (במקום ערך קבוע ב-mock data או ספירת שורות מודעות).
 > - הוסר התג "נמכר מהר!" מכרטיסי המשחקים בדף הבית, כולל השדה `isSelling` שכבר לא היה בשימוש.
@@ -21,7 +22,7 @@ _עודכן: 2026-06-12_
 - **UI/UX:** עברית RTL (`lang="he" dir="rtl"`), פונט Rubik, צבע ראשי צהוב `#F5C100`, רקע לבן עם דפוס נקודות אפורות, mobile-first עם תפריט תחתון קבוע (NavBar)
 - **DB:** PostgreSQL בענן Supabase (project: `czqgufsdoqoterqdpaiz`, region `eu-west-3`)
 - **ORM:** Prisma 7 עם `@prisma/adapter-pg` (driver adapter, חובה ב-Prisma 7)
-- **Auth:** NextAuth v4, Credentials provider (email+password, bcrypt), JWT sessions
+- **Auth:** NextAuth v4, Google OAuth provider בלבד (`GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET`), JWT sessions
 - **Deploy:** Vercel, auto-deploy מ-`main` ב-GitHub (`prielc/TickTac`)
 - **Build:** `prisma generate && next build` (קריטי — קבצי ה-client המיוצרים לא ב-git)
 
@@ -35,7 +36,7 @@ postgresql://postgres.czqgufsdoqoterqdpaiz:[PASSWORD]@aws-0-eu-west-3.pooler.sup
 ## מבנה נתונים
 - **Games (משחקים):** קבועים ב-`lib/mock-data.ts` — לא ב-DB. כל משחק: קבוצות, לוגואים (`public/teams/`), תאריך, אצטדיון, תחרות.
 - **Listings (כרטיסים למכירה):** ב-DB (Prisma model `Listing`) — gameId, section, row, seats, price, quantity, phone, isAvailable.
-- **User:** email, password (hash), name, **phone (חובה בהרשמה)**, **role** (`"user"`/`"admin"`, ברירת מחדל `"user"`), **isBanned** (Boolean, ברירת מחדל `false` — משתמש חסום לא יכול להתחבר).
+- **User:** email, name, image (מ-Google), phone (אופציונלי — מתבקש לאחר הרשמה דרך באנר ב-`/profile`), **role** (`"user"`/`"admin"`, ברירת מחדל `"user"`), **isBanned** (Boolean, ברירת מחדל `false` — משתמש חסום לא יכול להתחבר). שדה `password` עדיין קיים בסכמה (legacy) אך לא בשימוש.
 - **Report (דיווחים):** ב-DB (Prisma model `Report`) — reporterId, listingId, reason, description, **status** (`"open"`/`"resolved"`, ברירת מחדל `"open"`), createdAt. סיבות אפשריות מוגדרות ב-`lib/report-reasons.ts`.
 - **Rating (דירוגים):** ב-DB (Prisma model `Rating`) — raterId, ratedUserId, listingId, score (1-5), comment, createdAt/updatedAt. ייחודי לכל זוג (raterId, listingId) — דירוג חוזר על אותה מודעה מעדכן (upsert) ולא יוצר רשומה נוספת.
 
@@ -44,10 +45,10 @@ postgresql://postgres.czqgufsdoqoterqdpaiz:[PASSWORD]@aws-0-eu-west-3.pooler.sup
 |-----|------|-------|
 | בית | `/` | רשימת משחקים קרובים (GameCard עם לוגואים אמיתיים) |
 | משחק | `/games/[id]` | פרטי משחק + כרטיסים זמינים מה-DB |
-| הרשמה | `/register` | שם, אימייל, טלפון (ולידציה client+server), סיסמה |
-| כניסה | `/login` | אימייל + סיסמה |
+| כניסה / הרשמה | `/login` | כפתור "התחבר עם Google" בלבד — הרשמה אוטומטית בכניסה הראשונה |
+| הרשמה (legacy) | `/register` | מפנה (redirect) ל-`/login` |
 | פרסום כרטיס | `/sell` | בחירת משחק, יציע, שורה/מקומות, מחיר/כמות (טלפון נלקח אוטומטית מהפרופיל) |
-| פרופיל | `/profile` | שם, אימייל, טלפון של המשתמש המחובר, עם אפשרות עריכה (שם+טלפון, inline) + כפתור התנתקות. דורש התחברות (אחרת מפנה ל-`/login`) |
+| פרופיל | `/profile` | שם, אימייל, טלפון של המשתמש המחובר, עם אפשרות עריכה (שם+טלפון, inline) + כפתור התנתקות. דורש התחברות (אחרת מפנה ל-`/login`). אם אין טלפון שמור — באנר שמבקש להשלים אותו |
 | המודעות שלי | `/profile/listings` | רשימת כל המודעות שפרסם המשתמש המחובר, עם תגית סטטוס (זמין/נמכר) וכפתור טוגל לסימון כנמכר/זמין |
 | חיפוש | `/search` | שדה חיפוש שמסנן את רשימת המשחקים לפי קבוצה/יריבה/אצטדיון/תחרות, עם הודעת "לא נמצאו תוצאות" וקישור לבית |
 | ניהול (אדמין) | `/admin` | דשבורד עסקי: כרטיסי סיכום + גרפים. נגיש רק ל-`role: admin` |
@@ -58,10 +59,10 @@ postgresql://postgres.czqgufsdoqoterqdpaiz:[PASSWORD]@aws-0-eu-west-3.pooler.sup
 | דשבורד טכני | `/admin/technical` | בריאות חיבור ל-DB + גידול בטבלאות (7/30 יום) |
 
 ## פיצ'רים מרכזיים שמומשו
-1. **זרימת מוכר:** הרשמה → פרסום כרטיס → נשמר ב-Supabase
+1. **זרימת מוכר:** התחברות עם Google → פרסום כרטיס → נשמר ב-Supabase
 2. **זרימת קונה (Stage 4a):** לחיצה על "קנה" פותחת modal עם כפתורי WhatsApp (הודעה מוכנה עם פרטי הכרטיס) ושיחה — `app/components/ContactModal.tsx`
 3. **לוגואים אמיתיים** לכל הקבוצות (הורדו מ-Wikipedia ל-`public/teams/`)
-4. **ולידציה מלאה** בהרשמה (שם, אימייל, טלפון ישראלי, סיסמה) — `lib/validation.ts` משותף ל-client ו-API
+4. **ולידציה** טלפון ישראלי — `lib/validation.ts` (`isValidIsraeliPhone`), משותף ל-client ו-API
 5. **ניווט:** NavBar קבוע למטה; אייקון הפרופיל (עם שם המשתמש) מוביל לדף `/profile` ולא מתנתק ישירות; אייקון "חיפוש" מוביל לדף `/search`
 6. **עריכת פרופיל:** בדף `/profile` כפתור "ערוך" הופך את התצוגה לטופס inline לעריכת שם וטלפון (`app/components/ProfileDetails.tsx`, `PATCH /api/profile`); לאחר שמירה השם מתעדכן מיידית גם ב-NavBar (session update + `auth.ts` callbacks)
 7. **סימון מודעה כנמכרת:** בדף `/profile/listings` ("המודעות שלי") כל מוכר רואה את המודעות שפרסם, עם כפתור טוגל "סמן כנמכר"/"סמן כזמין" (`app/components/MyListingItem.tsx`, `PATCH /api/listings/[id]`, מעדכן `isAvailable`); מודעה שסומנה כנמכרת לא מופיעה יותר בדף המשחק לקונים
@@ -70,6 +71,13 @@ postgresql://postgres.czqgufsdoqoterqdpaiz:[PASSWORD]@aws-0-eu-west-3.pooler.sup
 10. **דיווח על מודעות חשודות:** קישור "דיווח על מודעה" בכל `ListingCard` פותח `app/components/ReportModal.tsx`; משתמש לא מחובר מופנה להתחברות, משתמש מחובר בוחר סיבה (מתוך `lib/report-reasons.ts`) ומוסיף תיאור חופשי, ושולח ל-`POST /api/reports`. ה-API דורש התחברות, מונע דיווח על מודעה של המשתמש עצמו, ושומר את הדיווח ב-DB (`Report`) לבדיקה ידנית — אין כרגע מסך ניהול דיווחים
 11. **דירוג משתמשים:** כפתור "דרגו את המוכר" בתוך `ContactModal` פותח `app/components/RatingModal.tsx` — משתמש לא מחובר מופנה להתחברות, משתמש מחובר בוחר 1-5 כוכבים + הערה חופשית ושולח ל-`POST /api/ratings` (דורש התחברות, מונע דירוג עצמי, upsert לפי raterId+listingId). הדירוג הממוצע + מספר הדירוגים של כל מוכר מחושב ב-`lib/ratings.ts` (`getSellerRatings`) ומוצג כתג `RatingBadge` (★ ממוצע (כמות)) על כל מודעה שלו בדף המשחק — מבוסס אמון, ללא אימות שהתבצעה עסקה בפועל
 12. **מסך ניהול אדמין (`/admin`):** ראו פירוט מלא בסעיף הבא
+
+## אימות והתחברות (Google OAuth)
+- **ספק יחיד**: `GoogleProvider` ב-`auth.ts`, מוגדר עם `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET` (env vars, גם ב-Vercel). Redirect URIs רשומים ב-Google Cloud Console: `/api/auth/callback/google` עבור localhost ו-production.
+- **find-or-create לפי email**: ב-`signIn` callback — אם קיים `User` עם אותו email, מתחברים לחשבון הקיים (משמרים `role`/`isBanned`/מודעות/דירוגים); אם לא קיים, נוצר `User` חדש (`role: "user"`, `isBanned: false`, `emailVerified` מסומן אוטומטית).
+- **חסימה**: משתמש עם `isBanned: true` נחסם בכניסה (signIn מחזיר `false`).
+- **`/login`**: כפתור "התחבר עם Google" יחיד. **`/register`**: redirect ל-`/login` (נשאר לתאימות לקישורים ישנים).
+- **טלפון**: Google לא מספק מספר טלפון; משתמש חדש נכנס בלי טלפון, ובדף `/profile` מוצג באנר שמבקש להשלים אותו (חובה כדי שקונים יוכלו ליצור קשר בוואטסאפ על המודעות שלו).
 
 ## מסך ניהול אדמין (`/admin`)
 
@@ -99,8 +107,9 @@ app/
   games/[id]/page.tsx       # פרטי משחק
   search/page.tsx           # חיפוש משחקים
   sell/page.tsx             # פרסום כרטיס
-  login/, register/         # auth pages
-  api/auth/                 # NextAuth + register endpoint
+  login/page.tsx            # כפתור "התחבר עם Google"
+  register/page.tsx         # redirect ל-/login
+  api/auth/                 # NextAuth (Google provider)
   api/listings/             # POST listing
   profile/page.tsx          # פרופיל משתמש + עריכה + התנתקות
   profile/listings/page.tsx # המודעות שלי + סימון כנמכר/זמין

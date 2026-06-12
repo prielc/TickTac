@@ -2,7 +2,7 @@
 
 שוק יד-שנייה (P2P) לכרטיסים לאירועי ספורט בישראל — מתחילים עם משחקי בית של ביתר ירושלים. קונה ומוכר מתואמים ישירות (WhatsApp/טלפון), בלי תשלום דרך הפלטפורמה.
 
-**Stack:** Next.js 16.2.7 (App Router) + TypeScript + Tailwind v4, Prisma 7 (`@prisma/adapter-pg`) + Supabase Postgres (חובה connection pooler בפורט 6543, לא 5432!), NextAuth v4, פרוס ב-Vercel, RTL עברית.
+**Stack:** Next.js 16.2.7 (App Router) + TypeScript + Tailwind v4, Prisma 7 (`@prisma/adapter-pg`) + Supabase Postgres (חובה connection pooler בפורט 6543, לא 5432!), NextAuth v4 עם **Google OAuth בלבד** (אין התחברות בסיסמה), פרוס ב-Vercel, RTL עברית.
 
 לסיכום מלא ומפורט (ארכיטקטורה, מבנה קבצים, מה נבנה, מה עוד לא) ראו **[PROJECT_SUMMARY.md](./PROJECT_SUMMARY.md)**.
 
