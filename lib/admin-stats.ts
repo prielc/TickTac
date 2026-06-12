@@ -82,3 +82,53 @@ export async function getRatingDistribution(): Promise<ScoreCount[]> {
 
   return [1, 2, 3, 4, 5].map((score) => ({ score, count: counts.get(score) ?? 0 }))
 }
+
+export type TableStats = { table: string; total: number; last7Days: number; last30Days: number }
+
+export async function getTechnicalStats(): Promise<TableStats[]> {
+  const now = new Date()
+  const sevenDaysAgo = new Date(now)
+  sevenDaysAgo.setDate(now.getDate() - 7)
+  const thirtyDaysAgo = new Date(now)
+  thirtyDaysAgo.setDate(now.getDate() - 30)
+
+  const [users, listings, reports, ratings] = await Promise.all([
+    Promise.all([
+      prisma.user.count(),
+      prisma.user.count({ where: { createdAt: { gte: sevenDaysAgo } } }),
+      prisma.user.count({ where: { createdAt: { gte: thirtyDaysAgo } } }),
+    ]),
+    Promise.all([
+      prisma.listing.count(),
+      prisma.listing.count({ where: { createdAt: { gte: sevenDaysAgo } } }),
+      prisma.listing.count({ where: { createdAt: { gte: thirtyDaysAgo } } }),
+    ]),
+    Promise.all([
+      prisma.report.count(),
+      prisma.report.count({ where: { createdAt: { gte: sevenDaysAgo } } }),
+      prisma.report.count({ where: { createdAt: { gte: thirtyDaysAgo } } }),
+    ]),
+    Promise.all([
+      prisma.rating.count(),
+      prisma.rating.count({ where: { createdAt: { gte: sevenDaysAgo } } }),
+      prisma.rating.count({ where: { createdAt: { gte: thirtyDaysAgo } } }),
+    ]),
+  ])
+
+  return [
+    { table: "משתמשים", total: users[0], last7Days: users[1], last30Days: users[2] },
+    { table: "מודעות", total: listings[0], last7Days: listings[1], last30Days: listings[2] },
+    { table: "דיווחים", total: reports[0], last7Days: reports[1], last30Days: reports[2] },
+    { table: "דירוגים", total: ratings[0], last7Days: ratings[1], last30Days: ratings[2] },
+  ]
+}
+
+export async function getDbHealth(): Promise<{ ok: boolean; latencyMs: number }> {
+  const start = Date.now()
+  try {
+    await prisma.$queryRaw`SELECT 1`
+    return { ok: true, latencyMs: Date.now() - start }
+  } catch {
+    return { ok: false, latencyMs: Date.now() - start }
+  }
+}
