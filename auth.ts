@@ -1,31 +1,12 @@
 import type { NextAuthOptions } from "next-auth"
-import CredentialsProvider from "next-auth/providers/credentials"
-import bcrypt from "bcryptjs"
+import GoogleProvider from "next-auth/providers/google"
 import { prisma } from "@/lib/prisma"
 
 export const authOptions: NextAuthOptions = {
   providers: [
-    CredentialsProvider({
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null
-
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
-        })
-
-        if (!user || !user.password) return null
-
-        const isValid = await bcrypt.compare(credentials.password, user.password)
-        if (!isValid) return null
-
-        if (user.isBanned) return null
-
-        return { id: user.id, email: user.email, name: user.name, role: user.role }
-      },
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
   session: { strategy: "jwt" },
@@ -33,6 +14,29 @@ export const authOptions: NextAuthOptions = {
     signIn: "/login",
   },
   callbacks: {
+    async signIn({ user, account }) {
+      if (account?.provider !== "google" || !user.email) return false
+
+      let dbUser = await prisma.user.findUnique({ where: { email: user.email } })
+
+      if (!dbUser) {
+        dbUser = await prisma.user.create({
+          data: {
+            email: user.email,
+            name: user.name,
+            image: user.image,
+            emailVerified: new Date(),
+          },
+        })
+      }
+
+      if (dbUser.isBanned) return false
+
+      user.id = dbUser.id
+      user.role = dbUser.role
+
+      return true
+    },
     async jwt({ token, user, trigger, session }) {
       if (user) {
         token.role = user.role
