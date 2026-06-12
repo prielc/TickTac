@@ -1,12 +1,22 @@
-import { getOverviewStats, getSignupsByDay, getListingsStatusCounts } from "@/lib/admin-stats"
+import {
+  getOverviewStats,
+  getSignupsByDay,
+  getListingsStatusCounts,
+  getReportsByReason,
+  getRatingDistribution,
+} from "@/lib/admin-stats"
 import SignupsChart from "@/app/components/admin/SignupsChart"
 import ListingsStatusChart from "@/app/components/admin/ListingsStatusChart"
+import ReportsByReasonChart from "@/app/components/admin/ReportsByReasonChart"
+import RatingDistributionChart from "@/app/components/admin/RatingDistributionChart"
 
 export default async function AdminDashboardPage() {
-  const [overview, signups, listingsStatus] = await Promise.all([
+  const [overview, signups, listingsStatus, reportsByReason, ratingDistribution] = await Promise.all([
     getOverviewStats(),
     getSignupsByDay(),
     getListingsStatusCounts(),
+    getReportsByReason(),
+    getRatingDistribution(),
   ])
 
   return (
@@ -22,6 +32,8 @@ export default async function AdminDashboardPage() {
 
       <SignupsChart data={signups} />
       <ListingsStatusChart counts={listingsStatus} />
+      <ReportsByReasonChart data={reportsByReason} />
+      <RatingDistributionChart data={ratingDistribution} />
     </div>
   )
 }
